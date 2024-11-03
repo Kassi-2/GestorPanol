@@ -1,0 +1,195 @@
+<h1 class="titulo">Lista de préstamos finalizados</h1>
+<div class="d-flex align-items-center justify-content-end">
+  <div class="container-xl">
+    <div class="d-flex justify-content-end">
+      <app-lending-options class="me-5"></app-lending-options>
+
+      <button type="button" class="btn btn-outline-secondary custom-margin-left btn-custom rounded-pill custom-button"
+        data-bs-toggle="modal"
+        data-bs-target="#modalSearch">
+        <i class="bi bi-search ms-2"></i> Buscar préstamos antiguos
+      </button>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="custom_input" style="justify-content: center">
+  <svg xmlns="http://www.w3.org/2000/svg" class="svg_icon bi-search" viewBox="0 0 16 16">
+    <path
+      d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
+    </path>
+  </svg>
+  <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar..." class="input me-3" style="min-width: 300px" />
+
+  <form>
+    <input type="date" class="form-control" (change)="selectDate($event)">
+  </form>
+  <div>
+
+  </div>
+
+</div>
+<div class="table-responsive-sm container-xl" style="margin-top: 20px;">
+  <table class="table table-striped">
+    <thead class="table-light">
+      <tr>
+        <th scope="col" class="text-center">Id</th>
+        <th scope="col" class="text-center">Nombre del prestatario</th>
+        <th scope="col" class="text-center">Fecha de creación</th>
+        <th scope="col" class="text-center">Fecha de finalización</th>
+        <th scope="col" class="text-center">Profesor Asignado</th>
+        <th scope="col" class="text-center">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (lending of filteredList()| slice: (page-1) * pageSize : page * pageSize;track lending;let i = $index) {
+      <tr>
+        <th scope="row" class="text-center">{{lending.id}}</th>
+        <td class="text-center">{{lending.borrower.name}}</td>
+        <td class="text-center">{{ lending.date | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td class="text-center">{{ lending.finalizeDate | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td class="text-center">
+          @if (lending.teacherId != null) {
+            {{lending.teacher.BorrowerId.name}}
+          }
+          @else {
+            -
+          }
+        </td>
+        <td class="text-center">
+          <button type="button" class="btn btn-outline-success me-2"
+          (click)="openLendingDetails(lending.id)"
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal">
+          <i class="bi bi-info-circle"></i>
+          </button>
+          <button class="btn btn-outline-danger me-2"(click)="deleteLending(lending.id)"><i class="bi bi-trash3"></i></button>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  <div class="d-flex justify-content-center mt-4">
+    <ngb-pagination [collectionSize]="filteredList().length" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true"></ngb-pagination>
+  </div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header text-white" style="background-color: #F79123;">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Detalles del préstamo</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>ID:</strong> {{ selectedLending?.id }}</p>
+        <p><strong>Nombre del prestatario:</strong> {{ selectedLending?.borrower.name }}</p>
+        <p><strong>Fecha de creación:</strong> {{ selectedLending?.date | date:'dd/MM/yyyy HH:mm' }}</p>
+        <p><strong>Fecha de finalización</strong> {{ selectedLending?.finalizeDate | date:'dd/MM/yyyy HH:mm' }}</p>
+          @if (selectedLending?.teacherId != null) {
+            <p><strong>Profesor asignado:</strong>
+
+              {{ selectedLending?.teacher.BorrowerId.name }}
+
+            </p>
+          }
+
+        <p><strong>Detalles del préstamo:</strong> {{ selectedLending?.comments}}</p>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col" class="text-center">Producto</th>
+              <th scope="col" class="text-center">Cantidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (lending of selectedLending?.lendingProducts; track lending; let i = $index) {
+            <tr>
+              <td class="text-center">{{ selectedLending?.lendingProducts[i].product.name}}</td>
+              <td class="text-center">{{selectedLending?.lendingProducts[i].amount}}</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="modalSearch" abindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+  <div class="modal-content">
+      <div class="modal-header text-white" style="background-color: #F79123;">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Lista de préstamos finalizados</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="closeLendingList()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex justify-content-center">
+        <input
+        type="text"
+        [(ngModel)]="inputValue"
+        (keyup.enter)="onEnterPress()"
+        placeholder="Ingresa un texto.."
+        class="input me-3"
+        style="min-width: 300px"
+      />
+      <button class="btn btn-outline-secondary" (click)="handleSubmit()">Enviar</button>
+      </div>
+      @if (showList) {
+      <table class="table table-striped">
+        <thead class="table-light">
+          <tr>
+            <th scope="col" class="text-center">Id</th>
+            <th scope="col" class="text-center">Nombre del prestatario</th>
+            <th scope="col" class="text-center">Fecha</th>
+            <th scope="col" class="text-center">Profesor Asignado</th>
+            <th scope="col" class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (lending of lending| slice: (pageLending-1) * pageSizeLending : pageLending * pageSizeLending; track lending; let i = $index) {
+          <tr>
+            <th scope="row" class="text-center">{{lending.id}}</th>
+            <td class="text-center">{{lending.borrower.name}}</td>
+            <td class="text-center">{{ lending.date | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="text-center">
+              @if (lending.teacherId != null) {
+                {{lending.teacher.BorrowerId.name}}
+              }
+              @else {
+                -
+              }
+            </td>
+            <td class="text-center">
+              <button type="button" class="btn btn-outline-success me-2"
+              (click)="openLendingDetails(lending.id)"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal">
+              <i class="bi bi-info-circle"></i>
+              </button>
+              <button class="btn btn-outline-danger me-2"(click)="deleteLending(lending.id)"><i class="bi bi-trash3"></i></button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+      <div class="d-flex justify-content-center mt-4">
+        <ngb-pagination [collectionSize]="lending.length" [(page)]="pageLending" [pageSize]="pageSizeLending" [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true"></ngb-pagination>
+      </div>
+    }
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="closeLendingList()" data-bs-dismiss="modal">Cerrar</button>
+    </div>
+  </div>
+</div>
+</div>
