@@ -1,0 +1,168 @@
+<h1 class = "titulo">Lista de préstamos activos</h1>
+
+<app-lending-options></app-lending-options>
+<div class="custom_input" style="justify-content: center">
+  <svg xmlns="http://www.w3.org/2000/svg" class="svg_icon bi-search" viewBox="0 0 16 16">
+    <path
+      d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
+    </path>
+  </svg>
+  <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar..." class="input me-3" style="min-width: 300px" />
+
+  <form>
+    <input type="date" class="form-control" (change)="selectDate($event)">
+  </form>
+
+</div>
+
+<div class="table-responsive-sm container-xl" style="margin-top: 20px;">
+  <table class="table table-striped">
+    <thead class="table-light">
+      <tr>
+        <th scope="col" class="text-center">Id</th>
+        <th scope="col" class="text-center">Nombre del prestatario</th>
+        <th scope="col" class="text-center">Fecha</th>
+        <th scope="col" class="text-center">Profesor Asignado</th>
+        <th scope="col" class="text-center">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (lending of filteredList() | slice: (page-1) * pageSize : page * pageSize;track lending;let i = $index) {
+        <tr>
+        <th scope="row" class="text-center">{{lending.id}}</th>
+        <td class="text-center">{{lending.borrower.name}}</td>
+        <td class="text-center">{{lending.date| date:'dd/MM/yyyy HH:mm' }}</td>
+        <td class="text-center">
+          @if (lending.teacherId != null) {
+            {{lending.teacher.BorrowerId.name}}
+          }
+          @else {
+            -
+          }
+        </td>
+        <td class="text-center">
+          <button type="button" class="btn btn-outline-success me-2"
+          (click)="openLendingDetails(lending.id)"
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal">
+          <i class="bi bi-info-circle"></i>
+          </button>
+          <button class="btn btn-outline-danger"
+          (click)="openLendingDetails(lending.id)"
+          data-bs-toggle="modal"
+          data-bs-target="#modalFinishLending">
+            <i class="bi bi-x-circle"></i> Finalizar
+          </button>        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  <div class="d-flex justify-content-center mt-4">
+    <ngb-pagination [collectionSize]="filteredList().length" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true"></ngb-pagination>
+  </div>
+</div>
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header text-white" style="background-color: #F79123;">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Detalles del préstamo</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>ID:</strong> {{ selectedLending?.id }}.</p>
+        <p><strong>Nombre del prestatario:</strong> {{ selectedLending?.borrower.name }}.</p>
+        <p><strong>Fecha de creación:</strong> {{ selectedLending?.date | date:'dd/MM/yyyy HH:mm' }} hrs.</p>
+          @if (selectedLending?.teacherId != null) {
+            <p><strong>Profesor asignado:</strong>
+
+              {{ selectedLending?.teacher.BorrowerId.name }}.
+
+            </p>
+          }
+
+
+        <p><strong>Comentario: </strong> {{ selectedLending?.comments}}</p>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col" class="text-center">Producto</th>
+              <th scope="col" class="text-center">Cantidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (lending of selectedLending?.lendingProducts; track lending; let i = $index) {
+            <tr>
+              <td class="text-center">{{selectedLending?.lendingProducts[i].product.name}}</td>
+              <td class="text-center">{{selectedLending?.lendingProducts[i].amount}}</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalFinishLending" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true" aria-labelledby="exampleModalLabel">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #F79123;">
+        <h5 class="modal-title text-white" id="exampleModalLabel">¿Desea finalizar el préstamo?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <p><strong>Nombre del prestatario:</strong> <span class="text-muted"> {{ selectedLending?.borrower.name }}.</span></p>
+          <p><strong>Fecha de creación:</strong> <span class="text-muted"> {{ selectedLending?.date | date:'dd/MM/yyyy HH:mm' }} hrs.</span></p>
+
+            @if (selectedLending?.teacherId != null) {
+              <p><strong>Profesor asignado:</strong>
+                {{ selectedLending?.teacher.BorrowerId.name }}.</p>
+            }
+
+        </div>
+        <div >
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col" class="text-center">Producto</th>
+                <th scope="col" class="text-center">Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (lending of selectedLending?.lendingProducts; track lending; let i = $index) {
+              <tr class="align-middle">
+                <td class="text-center">{{ selectedLending?.lendingProducts[i].product.name}}</td>
+                <td class="text-center">{{ selectedLending?.lendingProducts[i].amount}}</td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="mb-3">
+          <strong>¿Desea agregar algún comentario? </strong>
+          <textarea
+            #commentText
+            class="form-control"
+            id="myText"
+            name="myText"
+            placeholder="Escribe aquí...">{{ selectedLending?.comments }}</textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-outline-danger" (click)="finishLending(selectedLending?.id, commentText.value)"
+        data-bs-toggle="modal"
+        data-bs-target="#modalFinishLending">
+          <i class="bi bi-x-circle"></i> Finalizar Préstamo
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

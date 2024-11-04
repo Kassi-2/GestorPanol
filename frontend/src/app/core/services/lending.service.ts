@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { User } from '../models/user.interface';
 
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -32,6 +33,9 @@ export class LendingService {
   public getFilteredLendings(lending: string): Observable<Lending[]> {
     return this.http.get<Lending[]>(`${this.apiUrl}/teachers`);
 }
+  public getLendingPending(): Observable<Lending[]>{
+    return this.http.get<Lending[]>(`${this.apiUrl}/pending-lending`);
+  }
 
   public getLendingFinish(): Observable<Lending[]>{
     return this.http.get<Lending[]>(`${this.apiUrl}/finalized-lending-max`);
@@ -49,75 +53,84 @@ export class LendingService {
     return this.http.put<Lending>(`${this.apiUrl}/finalize-lending/${id}`, {comments: comments});
   }
 
-/**
- * Función para enviar el préstamo creado por el usuario al backend.
- *
- * @param {newLending} lending
- * @return {*}
- * @memberof LendingService
- */
-public addLending(lending: newLending) {
+  public updateLendingPending(id: number): Observable<Lending> {
+    return this.http.put<Lending>(`${this.apiUrl}/active-pending/${id}`, {});
+  }
+
+  /**
+   * Función para enviar el préstamo creado por el usuario al backend.
+   *
+   * @param {newLending} lending
+   * @return {*}
+   * @memberof LendingService
+   */
+  public addLending(lending: newLending) {
     this.currentStep = new BehaviorSubject<number>(1);
     return this.http.post(`${this.apiUrl}`, lending);
   }
 
-/**
- * Función para almacenar la información del préstamo almacenado.
- *
- * @param {(contains[] | null)} Contains
- * @memberof LendingService
- */
-setContains(Contains: contains[] | null) {
+  public addLendingPending(lending: newLending) {
+    this.currentStep = new BehaviorSubject<number>(1);
+    return this.http.post(`${this.apiUrl}/`, lending);
+  }
+
+  /**
+   * Función para almacenar la información del préstamo almacenado.
+   *
+   * @param {(contains[] | null)} Contains
+   * @memberof LendingService
+   */
+  setContains(Contains: contains[] | null) {
     this.containsSubject.next(Contains);
   }
 
-/**
- * Función para obtener la información del préstamo almacenado temporalmente.
- *
- * @return {*}
- * @memberof LendingService
- */
-getLastLending() {
+  /**
+   * Función para obtener la información del préstamo almacenado temporalmente.
+   *
+   * @return {*}
+   * @memberof LendingService
+   */
+  getLastLending() {
     return this.containsSubject.asObservable();
   }
 
-/**
- * Función para almacenar el paso de la creación de un préstamo.
- *
- * @param {number} step
- * @memberof LendingService
- */
-setCurrentStep(step: number) {
+  /**
+   * Función para almacenar el paso de la creación de un préstamo.
+   *
+   * @param {number} step
+   * @memberof LendingService
+   */
+  setCurrentStep(step: number) {
     this.currentStep.next(step);
   }
 
-/**
- * Función para recuperar el paso de la creación de un préstamo en el que el usuario se quedó.
- *
- * @return {*}
- * @memberof LendingService
- */
-getCurrentStep() {
+  /**
+   * Función para recuperar el paso de la creación de un préstamo en el que el usuario se quedó.
+   *
+   * @return {*}
+   * @memberof LendingService
+   */
+  getCurrentStep() {
     return this.currentStep.asObservable();
   }
 
-/**
- * Función para recuperar el usuario almacenado.
- *
- * @return {*}
- * @memberof LendingService
- */
-getSelectedUser() {
+  /**
+   * Función para recuperar el usuario almacenado.
+   *
+   * @return {*}
+   * @memberof LendingService
+   */
+  getSelectedUser() {
     return this.selectedUser.asObservable();
   }
 
-/**
- * Función para definir el usuario seleccionado para almacenarlo en el servicio.
- *
- * @param {(User | null)} user
- * @memberof LendingService
- */
-setSelectedUser(user: User | null) {
+  /**
+   * Función para definir el usuario seleccionado para almacenarlo en el servicio.
+   *
+   * @param {(User | null)} user
+   * @memberof LendingService
+   */
+  setSelectedUser(user: User | null) {
     this.selectedUser.next(user);
   }
 
