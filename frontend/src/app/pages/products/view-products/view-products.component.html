@@ -1,0 +1,98 @@
+<h1 class = "text-center my-4">Inventario</h1>
+<div class="container mb-4">
+  <div class="d-flex justify-content-between">
+    <div class="d-flex align-items-center">
+      <p class="mb-0 me-2 fw-semibold">Ordenar por:</p>
+      <div class="custom-select">
+        <select #options (change)="onSelected(options.value)">
+          <option default>A-Z</option>
+          <option>Z-A</option>
+          <option>De menor a mayor stock</option>
+          <option>De mayor a menor stock</option>
+        </select>
+        <div class="select-arrow"></div>
+      </div>
+    </div>
+
+    <div class="custom_input">
+      <svg xmlns="http://www.w3.org/2000/svg" class="svg_icon bi-search" viewBox="0 0 16 16">
+        <path
+          d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
+        </path>
+      </svg>
+      <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar..." class="input" style="min-width: 500px" />
+    </div>
+
+    <a href="inventory/add-product" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+      <i class="bi bi-plus-circle"></i> Añadir Producto
+    </a>
+  </div>
+</div>
+
+<div class="container">
+  <div class="accordion" id="accordionExample">
+    <table class="table table-striped table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">Código</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Stock</th>
+          <th scope="col">Estado</th>
+        </tr>
+      </thead>
+    </table>
+    @for (product of filteredList() | slice: (page-1) * pageSize : page * pageSize;track product;let i = $index) {
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading{{ i }}">
+        <button class="accordion-button collapsed d-flex justify-content-between align-items-center" type="button"
+          data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse' + i" aria-expanded="false"
+          [attr.aria-controls]="'collapse' + i" data-bs-target="#info">
+          <div class="d-flex align-items-center">
+            <div class="codeProduct">
+              {{ product.id }}
+            </div>
+            <div class="nameProduct">
+              {{ product.name }}
+            </div>
+            <div class="stockProduct">
+              {{ product.stock }}
+            </div>
+          </div>
+          <div class="state-for-product">
+            @if ( product.stock > 0 && product.criticalStock < product.stock ) {
+              <span class="badge bg-success">Disponible</span>
+            } @else if ( product.stock > 0 && product.criticalStock >= product.stock ) {
+              <span class="badge bg-warning">Crítico</span>
+            } @else {
+              <span class="badge bg-danger">No disponible</span>
+            }
+          </div>
+        </button>
+      </h2>
+
+      <div id="collapse{{ i }}" class="accordion-collapse collapse" [attr.aria-labelledby]="'heading' + i"
+        data-bs-parent="#accordionExample">
+        <div id="info" class="accordion-body">
+          <p><strong>Descripción:</strong> {{ product.description }}</p>
+          <p><strong>¿El producto es fungible?: </strong>
+          @if (product.fungible) {
+            Sí, si es fungible
+          } @else {
+            No, no es fungible
+          }</p>
+          <div class="d-flex">
+            <a href="#" class="btn btn-outline-danger me-2" [attr.data-bs-toggle]="'modal'"
+              [attr.data-bs-target]="'#deleteModal' + i" (click)="deleteProduct(product.id)">
+              <i class="bi bi-trash3-fill"></i> Eliminar
+            </a>
+            <button class="btn btn-outline-secondary me-2"><i class="bi bi-clock-history"> </i> Ver historial</button>
+          </div>
+        </div>
+      </div>
+    </div> }
+  </div>
+  <ngb-pagination [collectionSize]="products.length" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true" />
+</div>
+
+
+<app-add-product></app-add-product>
