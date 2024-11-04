@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Borrower {
+  id          Int      @id @default(autoincrement())
+  state       Boolean  @default(true)
+  rut         String   @unique
+  name        String
+  mail        String?
+  phoneNumber Int?
+  type        UserType
+
+  lendings Lending[] @relation(name:"make")
+
+  student  Student?
+  teacher  Teacher?
+  assistant Assistant?
+}
+
+model Student {
+  BorrowerId Borrower @relation(fields: [id], references: [id])
+  id         Int      @id
+  degree     Degree   @relation(name: "pursues", fields: [codeDegree], references: [code])
+  codeDegree String
+}
+
+model Degree {
+  code     String    @id
+  name     String
+  students Student[] @relation(name: "pursues")
+}
+
+model Teacher {
+  BorrowerId Borrower @relation(fields: [id], references: [id])
+  id         Int      @id
+  lendings   Lending[] @relation(name: "authorizes")
+}
+
+model Assistant {
+  BorrowerId Borrower @relation(fields: [id], references: [id])
+  id         Int      @id
+  role       String
+}
+
+enum UserType {
+  Student
+  Teacher
+  Assistant
+}
+
+
+model product {
+  id        Int    @id @default(autoincrement())
+  name    String
+  description String?
+  stock     Int? @default(0)
+  criticalStock Int @default(1)
+  state     Boolean @default(true)
+  fungible Boolean @default(false)
+  lendingProducts  LendingProduct[] @relation(name: "productLending") 
+  @@unique([name])
+}
+
+model Lending{
+  id        Int @id @default(autoincrement())
+  state     LendingState @default(Active)
+  date DateTime @default(now())
+  finalizeDate DateTime?
+  eliminateDate DateTime?
+  comments String?
+  BorrowerId Int
+  borrower Borrower @relation(name:"make", fields:[BorrowerId], references: [id])
+  alerts AlertLending[]
+  teacherId  Int?
+  teacher Teacher? @relation(name: "authorizes", fields: [teacherId], references: [id])
+  lendingProducts LendingProduct[] @relation(name: "lendingProducts")
+}
+
+model LendingProduct {
+  lendingId Int
+  productId Int
+  amount  Int    
+  lending   Lending  @relation(name: "lendingProducts", fields: [lendingId], references: [id])
+  product   product  @relation(name: "productLending", fields: [productId], references: [id])
+
+  @@id([lendingId, productId]) 
+  @@unique([lendingId, productId])
+}
+enum LendingState {
+  Active
+  Pending
+  Finalized
+  Inactive
+}
+
+
+model Alert{
+  id Int @id @default(autoincrement())
+  date DateTime 
+  name String
+  description String
+  state Boolean @default(false)
+  lendings AlertLending[]
+}
+
+model AlertLending{
+  alert Alert @relation(fields: [alertId], references: [id], onDelete: Cascade)
+  alertId Int
+  lending Lending @relation(fields: [lendingId], references: [id])
+  lendingId Int
+
+  @@id([alertId, lendingId])
+}
+
+
+model User {
+  mail String @id
+  username String @unique
+  password String
+}
