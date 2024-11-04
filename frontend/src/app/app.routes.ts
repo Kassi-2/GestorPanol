@@ -7,8 +7,7 @@ import { LendingOptionsComponent } from './pages/lending/lending-options/lending
 export const routes: Routes = [
   {
     path: 'add-lending',
-    component: LendingAddComponent,
-    patchMatch: 'full'},
+    component: LendingAddComponent},
     {  path: 'lendings/active', component: LendingActiveComponent },
     { path: 'lendings/finish', component: LendingFinishComponent },
     { path: 'lendings/options', component: LendingOptionsComponent },
