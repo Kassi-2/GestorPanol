@@ -1,0 +1,42 @@
+<h1 class = "titulo"> Usuarios registrados</h1>
+
+<app-user-options></app-user-options>
+
+<div class="table-responsive-sm container-xl" style="margin-top: 20px;">
+  <table class="table table-striped-columns table-sm">
+    <thead>
+      <tr>
+        <th>Rut</th>
+        <th>Nombre</th>
+        <th>Cargo</th>
+        <th>Contactos</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (assistant of filteredAssistant; track $index) {
+      <tr>
+        <td>{{assistant.rut}}</td>
+        <td>{{assistant.name}}</td>
+        <td>{{assistant.assistant.role}}</td>
+        <td> {{assistant.mail}} <br> @if (assistant.phoneNumber != 0 && assistant.phoneNumber) { +56
+          {{assistant.phoneNumber}} }</td>
+        <td>
+          <div class="d-flex gap-2 justify-content-center">
+            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal"
+              data-bs-target="#modalEditUser">
+              <i class="bi bi-pencil-square"> editar</i>
+            </button>
+            <button type="button" class="btn btn-outline-danger btn-sm">
+              <i class="bi bi-x-square"> eliminar</i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  <div class="d-flex justify-content-center">
+    <ngb-pagination [collectionSize]="filteredAssistant.length" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true" />
+  </div>
+</div>

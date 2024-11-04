@@ -1,0 +1,43 @@
+<h1 class = "titulo"> Usuarios registrados</h1>
+
+<app-user-options></app-user-options>
+
+<div class="table-responsive-sm container-xl" style="margin-top: 20px;">
+  <table class="table table-striped-columns">
+    <thead>
+      <tr>
+        <th>Rut</th>
+        <th>Nombre</th>
+        <th>Carrera</th>
+        <th>Contactos</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @if (degrees) {
+      @for (student of filteredStudents | slice: (page-1) * pageSize : page * pageSize; track $index) {
+      <tr>
+        <td>{{student.rut}}</td>
+        <td>{{student.name}}</td>
+        <td>{{getDegree(student.student.codeDegree)}}</td>
+        <td> {{student.mail}} <br> @if (student.phoneNumber != 0 && student.phoneNumber) { +56 {{student.phoneNumber}} }
+        </td>
+        <td>
+          <div class="d-flex gap-2 justify-content-center">
+            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal"
+              data-bs-target="#modalEditUser">
+              <i class="bi bi-pencil-square"> editar</i>
+            </button>
+            <button type="button" class="btn btn-outline-danger btn-sm">
+              <i class="bi bi-x-square"> eliminar</i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      }}
+    </tbody>
+  </table>
+  <div class="d-flex justify-content-center">
+    <ngb-pagination [collectionSize]="filteredStudents.length" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true" />
+  </div>
+</div>

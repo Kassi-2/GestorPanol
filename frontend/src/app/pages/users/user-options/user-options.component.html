@@ -1,0 +1,40 @@
+<div class="container-xl" style="margin-top: 20px;">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="custom_input">
+        <svg xmlns="http://www.w3.org/2000/svg" class="svg_icon bi-search" viewBox="0 0 16 16">
+          <path
+            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
+          </path>
+        </svg>
+        <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Buscar..." class="input" />
+      </div>
+  
+      <div class="d-flex gap-4">
+        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+          data-bs-target="#modalAddUser">
+          <i class="bi bi-person-plus"></i>
+          Agregar Usuario
+        </button>
+        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
+          data-bs-target="#modalImportUsers">
+          <i class="bi bi-filetype-xlsx"></i>
+          Importar Usuarios
+        </button>
+      </div>
+    </div>
+  
+    <h3 class="subtitulo" >Seleccione el tipo de usuario que desea mostrar:</h3>
+  
+    <ul class="nav justify-content-center mt-2">
+      <li class="nav-item">
+        <a class="nav-link link-dark" routerLink="/users/students">Estudiantes</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link link-dark" routerLink="/users/teachers">Profesores</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link link-dark" routerLink="/users/assistants">Asistentes</a>
+      </li>
+    </ul>
+</div>
+  
