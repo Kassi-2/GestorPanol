@@ -1,0 +1,47 @@
+.custom_input {
+    display: flex;
+    align-items: center;
+    position: relative;
+    max-width: 200%;
+  }
+  
+  .input {
+    font-size: 18px;
+    padding: 5px 10px;
+    width: 100%;
+    padding-left: 35px;
+    outline: none;
+    background: #FFFFFF;
+    color: #000000;
+    border: 1px solid #666666;
+    border-radius: 40px;
+    box-shadow: 3px 3px 2px 0px #E2E2E2;
+    transition: 0.3s ease;
+  
+  }
+  
+  .input:focus {
+    background: #F2F2F2;
+    border: 1px solid #F79123;
+    border-radius: 40px;
+  }
+  
+  .input::placeholder {
+    color: #DDDDDD;
+  }
+  
+  .svg_icon {
+    position: absolute;
+    left: 10px;
+    fill: #F79123;
+    width: 18px;
+    height: 18px;
+  }
+  
+  .d-flex.gap-4 {
+    gap: 1rem;
+  }
+  
+  .subtitulo{
+    margin-top: 20px;
+  }
