@@ -167,4 +167,63 @@ export class LendingService {
 
     }
 
+    //obtiene los préstamos con estado active, ordenados desde los más
+    //recientes a los más antiguos por la fecha en la que se creó el préstamo
+    async getActiveLendings(): Promise<Lending[]> {
+        return this.prisma.lending.findMany({
+            where: {
+                state: LendingState.Active,
+            },
+            include: {
+                borrower: { 
+                    select: {
+                      name: true,
+                    },
+                  },
+                  teacher: { 
+                    select: {
+                      BorrowerId: {
+                        select: {
+                          name: true,
+                        },
+                      },
+                    },
+                  },
+            },
+            orderBy: {
+                date: "desc",
+            },
+        });
+    }
+
+    //obtiene solo los primeros 20 préstamos finalizados ordenados desde los 
+    //más recientes a los más antiguos por la fecha en la que se finalizó el préstamo
+      async getFinalizedLendingsMax(): Promise<Lending[]> {
+        return this.prisma.lending.findMany({
+            where: {
+                state: LendingState.Finalized,
+            },
+            include: {
+                borrower: { 
+                    select: {
+                      name: true,
+                    },
+                  },
+                  teacher: { 
+                    select: {
+                      BorrowerId: {
+                        select: {
+                          name: true,
+                        },
+                      },
+                    },
+                  },
+            },
+            orderBy: {
+                finalizeDate: "desc",
+            },
+            take: 50,
+        });
+      }
+
 }

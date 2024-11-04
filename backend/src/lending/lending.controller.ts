@@ -9,6 +9,16 @@ export class LendingController {
 
     
 
+    @Get("/active-lending")
+    async getActive(){
+        return this.lendingService.getActiveLendings()
+    }
+
+    @Get("/finalized-lending-max")
+    async getFinalizedMax(){
+        return this.lendingService.getFinalizedLendingsMax()
+    }
+    
     @Post()
     async createLending(@Body(ValidationPipe) request: LendingCreateDTO){
         return this.lendingService.createLending(request)
