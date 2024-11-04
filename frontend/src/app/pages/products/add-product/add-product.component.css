@@ -1,0 +1,34 @@
+.myButton {
+    font-size: 13px;
+    background-color: #f79123;
+    padding: 5px 10px;
+    padding-bottom: 3px;
+}
+
+.myButton:hover {
+    background-color: #ff9933;
+}
+
+::ng-deep .popover-body {
+    text-align: justify;
+}
+
+.btn-primary:hover {
+    background-color: #ff9933;
+}
+
+::ng-deep .btn-primary {
+background-color: #f79123;
+border: #f79123;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+
+.form-check-input:checked {
+background-color: #ff9933;
+border-color: #ff9933;
+}

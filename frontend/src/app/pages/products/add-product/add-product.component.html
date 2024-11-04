@@ -1,0 +1,82 @@
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">
+            Agregar Producto
+          </h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="productName" class="col-form-label">Nombre:</label>
+              <input type="text" class="form-control" id="productName" name="name" required formControlName="name"
+                [class.is-invalid]="notValidName" placeholder="Nombre del Producto" />
+            @if (notValidName) {
+              <small class="text-danger">Ingrese un nombre de producto.</small>
+            }
+            </div>
+  
+            <div class="mb-3">
+              <label for="productCategory" class="col-form-label">Categoría:</label>
+              <select class="form-control" id="productCategory">
+                <option>Seleccione una categoría...</option>
+                <option>Insumos</option>
+                <option>Equipos</option>
+                <option>Herramientas</option>
+              </select>
+            </div>
+  
+            <div class="mb-3">
+              <label for="productDescription" class="col-form-label">Descripción:</label>
+              <textarea class="form-control" id="productDescription" name="description" formControlName="description"
+                placeholder="Descripción del producto"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="initialStock" class="col-form-label">Stock Inicial:</label>
+              <input type="number" value="0" class="form-control" id="initialStock" name="stock" formControlName="stock"
+                (keypress)="preventNegative($event)" placeholder="Stock inicial del producto" />
+            </div>
+            <div class="mb-3">
+              <label for="criticalStock" class="col-form-label">Stock Crítico:</label>
+
+              <button type="button" class="myButton border-0 text-light rounded-circle ms-2" placement="end"
+              ngbPopover="Es el número de productos en el que el sistema mandará una
+              alarma cuando el stock llegue a ese número."
+              popoverTitle="Stock Crítico">?</button>
+  
+              <input type="number" class="form-control" id="criticalStock" name="criticalStock" required
+                formControlName="criticalStock" [class.is-invalid]="notValidCriticalStock"
+                (keypress)="preventNegative($event)" placeholder="Stock crítico del producto" />
+              @if (notValidCriticalStock) {
+                <small class="text-danger">Ingrese un stock crítico.</small>
+              }
+            </div>
+  
+            <div class="form-check d-flex">
+              <input class="form-check-input me-2" type="checkbox" id="isFungible" formControlName="isFungible" />
+              <label class="form-check-label" for="isFungible">
+                ¿Es un producto fungible?
+              </label>
+              <button type="button" class="myButton border-0 text-light rounded-circle ms-2" placement="end"
+              ngbPopover="Los productos fungibles son aquellos que al prestarse no son
+              devueltos. Esto quiere decir que al ingresar un producto
+              fungible a un préstamo, éste se disminuirá el stock del
+              producto en la cantidad prestada una vez finalizado el
+              préstamo."
+              popoverTitle="Producto fungible">?</button>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeModal()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" (click)="onSubmit()">
+            Confirmar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
