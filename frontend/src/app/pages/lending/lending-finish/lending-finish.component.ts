@@ -1,18 +1,20 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { UserService } from '../../../../core/services/user.service';
 import { Lending } from './../../../core/models/lending.interface';
 import Swal from 'sweetalert2';
 import { LendingService } from './../../../core/services/lending.service';
 import { User,UserTeacher } from './../../../core/models/user.interface';
 import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { LendingOptionsComponent } from '../lending-options/lending-options.component';
+import { UserService } from '../../../core/services/user.service';
+import { HttpClientModule } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-lending-finish',
   standalone: true,
-  imports: [LendingOptionsComponent, CommonModule, FormsModule, NgbPagination],
+  imports: [LendingOptionsComponent, CommonModule, FormsModule, NgbPagination, HttpClientModule],
   templateUrl: './lending-finish.component.html',
   styleUrl: './lending-finish.component.css'
 })
@@ -113,6 +115,7 @@ export class LendingFinishComponent {
 
   // Función para poder eliminar un prestamo finalizado
   public deleteLending(idLending: number): void {
+    console.log(idLending)
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
         confirmButton: "btn btn-success",

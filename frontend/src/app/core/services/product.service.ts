@@ -9,7 +9,7 @@ import { HttpClient } from '@angular/common/http';
 export class ProductService {
   constructor(private http: HttpClient) {}
 
-  private apiUrl = 'http://localhost:3000/products';
+  private apiUrl = 'http://localhost:3000/product';
 
   /**
    *Función que devuelve un observable con todos los productos registrados en la base de datos.
@@ -18,7 +18,7 @@ export class ProductService {
    * @memberof ProductService
    */
   getProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>(`${this.apiUrl}/active-name-asc`);
+    return this.http.get<Product[]>(`${this.apiUrl}/active-name-desc`);
   }
 
   getAvailableProducts(): Observable<Product[]> {

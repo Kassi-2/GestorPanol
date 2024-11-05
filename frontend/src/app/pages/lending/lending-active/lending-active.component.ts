@@ -8,13 +8,14 @@ import { CommonModule } from '@angular/common';
 import { Lending } from './../../../core/models/lending.interface';
 import { FormsModule } from '@angular/forms';
 import { UserService } from './../../../core/services/user.service';
+import { HttpClientModule } from '@angular/common/http';
 
 
 
 @Component({
   selector: 'app-lending-active',
   standalone: true,
-  imports: [LendingOptionsComponent, NgbAccordionModule, CommonModule, FormsModule, NgbPagination],
+  imports: [LendingOptionsComponent, NgbAccordionModule, CommonModule, FormsModule, NgbPagination, HttpClientModule],
   templateUrl: './lending-active.component.html',
   styleUrl: './lending-active.component.css',
   providers: [LendingService]

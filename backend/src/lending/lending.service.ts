@@ -41,7 +41,7 @@ export class LendingService {
             }
         }
 
-        const lendingState = data.teacherId ? LendingState.Pending : LendingState.Active;
+        const lendingState = LendingState.Active;
 
     const lending = await this.prisma.lending.create({
         data: {
@@ -76,7 +76,45 @@ export class LendingService {
             });
         }
         return lending;
-    }    
+    }   
+    
+    async getLendingById(id: number): Promise<Lending> {
+        return this.prisma.lending.findUnique({
+          where: {
+            id,
+          },
+          include: {
+            lendingProducts: {
+              select: {
+                amount: true, 
+                product: {
+                  select: {
+                    id: true,
+                    name: true, 
+                    stock: true,
+                  },
+                },
+              },
+            },
+            borrower: {
+              select: {
+                name: true,
+                rut: true,
+              },
+            },
+            teacher:{
+                select: {
+                    BorrowerId: {
+                      select: {
+                        name: true,
+                        rut: true,
+                      },
+                    },
+                }
+            }
+          },
+        });
+      }
 
 
     //cambia el estado de un préstamo activo o pending a finalizado,

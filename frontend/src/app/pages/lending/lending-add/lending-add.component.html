@@ -291,39 +291,42 @@
                 pageSize : pageProducts * pageSize; track product; let i =
                 $index) {
                 <tr>
-                  <td>{{ product.id }}</td>
-                  <td>{{ product.name }}</td>
-                  <td>{{ product.stock }}</td>
-                  <td style="width: 150px">
-                    <div class="d-flex align-items-center">
-                      <button
-                        class="btn btn-outline-secondary rounded-circle"
-                        (click)="decrementQuantity(product.id)"
-                        [disabled]="getQuantity(product.id) === 0"
-                      >
-                        -
-                      </button>
 
-                      <input
-                        class="form-control mx-1 text-center"
-                        type="number"
-                        [value]="getQuantity(product.id)"
-                        (input)="
-                          onQuantityInput($event, product.id, product.stock)
-                        "
-                        min="0"
-                        [max]="product.stock"
-                      />
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.stock }}</td>
+                    <td style="width: 150px">
+                      <div class="d-flex align-items-center">
+                        <button
+                          class="btn btn-outline-secondary rounded-circle"
+                          (click)="decrementQuantity(product.id)"
+                          [disabled]="getQuantity(product.id) === 0"
+                        >
+                          -
+                        </button>
 
-                      <button
-                        class="btn btn-outline-secondary rounded-circle"
-                        (click)="incrementQuantity(product.id, product.stock)"
-                        [disabled]="product.stock === 0"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </td>
+                        <input
+                          class="form-control mx-1 text-center"
+                          type="number"
+                          [value]="getQuantity(product.id)"
+                          (input)="
+                            onQuantityInput($event, product.id, product.stock)
+                          "
+                          min="0"
+                          [max]="product.stock"
+                        />
+
+                        <button
+                          class="btn btn-outline-secondary rounded-circle"
+                          (click)="incrementQuantity(product.id, product.stock)"
+                          [disabled]="product.stock === 0"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </td>
+
+
                 </tr>
                 }
               </tbody>

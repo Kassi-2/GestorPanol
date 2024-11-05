@@ -25,6 +25,7 @@ import { Product } from '../../../core/models/product.interface';
 import { UserService } from '../../../core/services/user.service';
 import Swal from 'sweetalert2';
 
+
 @Component({
   selector: 'app-lending-add',
   standalone: true,
@@ -205,7 +206,7 @@ export class LendingAddComponent implements OnInit {
    */
   getProducts(): void {
     this.productService
-      .getAvailableProducts()
+      .getProducts()
       .subscribe((products: Product[]) => {
         this.products = products;
       });

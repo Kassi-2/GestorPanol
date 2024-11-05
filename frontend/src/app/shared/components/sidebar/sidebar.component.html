@@ -1,0 +1,73 @@
+<nav class="navbar navbar" style="background-color: #f79123;">
+  <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+          aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand"></a>
+      <div class="d-flex flex-row">
+          <button class="btn navbar-brand" type="button" routerLink="/add-lending">
+              <i class="bi bi-plus-circle"></i>
+          </button>
+          <div class="dropdown">
+            <button class="btn navbar-brand" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-bell position-relative">
+                    @if (unreadCount > 0){
+                      <span class="notification-badge">{{ unreadCount }}</span>
+                    }
+
+                </i>
+            </button>
+        </div>
+
+
+          <div class="position-relative">
+            <button class="btn navbar-brand" type="button" id="userButton" data-bs-toggle="collapse" data-bs-target="#logoutBox" aria-expanded="false" aria-controls="logoutBox">
+                <i class="bi bi-person-circle"></i>
+            </button>
+            <div class="collapse position-absolute" id="logoutBox" style="right: 0; top: 50px;">
+                <div class="card" style="width: 180px;">
+                    <div class="card-body">
+                        <button class="btn btn-danger" >
+                            <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+      </div>
+      <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" style="width: 250px;"
+          aria-labelledby="offcanvasNavbarLabel">
+          <div class="offcanvas-header" style="background-color: #f79123;">
+              <div class="container-fluid">
+                  <div class="row justify-content-end">
+                      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                  </div>
+                  <div class="row justify-content-center">
+                      
+                  </div>
+              </div>
+          </div>
+          <div class="offcanvas-body">
+              <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                  <li class="nav-item">
+                      <a class="nav-link active" aria-current="page" routerLink="/inventory" data-bs-dismiss="offcanvas">Inventario</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link active" aria-current="page" routerLink="/lendings/active" data-bs-dismiss="offcanvas">Préstamos</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link active" aria-current="page" routerLink="/users/students" data-bs-dismiss="offcanvas">Usuarios</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link active" aria-current="page" data-bs-dismiss="offcanvas">Reportes</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link active" aria-current="page">Facturas</a>
+                  </li>
+              </ul>
+          </div>
+      </div>
+  </div>
+</nav>

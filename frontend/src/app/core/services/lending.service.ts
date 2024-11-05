@@ -27,7 +27,7 @@ export class LendingService {
   }
 
   public deleteLending(id: number): Observable<Lending> {
-    return this.http.delete<Lending>(`${this.apiUrl}/${id}`);
+    return this.http.delete<Lending>(`${this.apiUrl}/delete/${id}`);
 }
 
   public getFilteredLendings(lending: string): Observable<Lending[]> {

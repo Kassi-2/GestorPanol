@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   User,
@@ -10,6 +10,7 @@ import {
 } from '../models/user.interface';
 import { Degree } from '../models/degree.interface';
 import { Observable } from 'rxjs';
+
 
 @Injectable({
   providedIn: 'root',

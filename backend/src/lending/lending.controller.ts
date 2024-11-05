@@ -14,6 +14,11 @@ export class LendingController {
         return this.lendingService.getActiveLendings()
     }
 
+    @Get("lending-id/:id")
+    async getLendingById(@Param('id') id: string){
+        return this.lendingService.getLendingById(Number(id))
+    }
+
     @Get("/finalized-lending-max")
     async getFinalizedMax(){
         return this.lendingService.getFinalizedLendingsMax()
