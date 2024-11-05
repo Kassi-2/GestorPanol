@@ -73,14 +73,17 @@
       <div id="collapse{{ i }}" class="accordion-collapse collapse" [attr.aria-labelledby]="'heading' + i"
         data-bs-parent="#accordionExample">
         <div id="info" class="accordion-body">
-          <p><strong>Descripción:</strong> {{ product.description }}</p>
-          <p><strong>¿El producto es fungible?: </strong>
-          @if (product.fungible) {
-            Sí, si es fungible
-          } @else {
-            No, no es fungible
-          }</p>
-          <div class="d-flex">
+          @if(product.description){
+            <p><strong>Descripción:</strong> {{ product.description }}</p>
+          }
+
+          @if(product.fungible){
+            <p><strong>Tipo de producto: </strong>Fungible</p>
+          }
+         @else {
+          <p><strong>Tipo de producto: </strong>No fungible</p>
+
+          }         <div class="d-flex">
             <a href="#" class="btn btn-outline-danger me-2" [attr.data-bs-toggle]="'modal'"
               [attr.data-bs-target]="'#deleteModal' + i" (click)="deleteProduct(product.id)">
               <i class="bi bi-trash3-fill"></i> Eliminar

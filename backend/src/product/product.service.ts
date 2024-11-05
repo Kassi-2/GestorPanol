@@ -47,7 +47,7 @@ export class ProductService {
         state: true,
       },
       orderBy: {
-        name: 'desc',
+        name: 'asc',
       },
     });
   }

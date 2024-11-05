@@ -37,7 +37,6 @@ export class LendingActiveComponent {
 
   ngOnInit() {
     this.getLending();
-
   }
 
   // Funcion para poder mostrar prestamos activos por fecha

@@ -430,6 +430,9 @@ export class LendingAddComponent implements OnInit {
         });
 
         this.initializeLendingForm();
+        setTimeout(() => {
+          window.location.reload()
+        }, 1500);
       },
       error: (error) => {
         swalWithBootstrapButtons.fire({
