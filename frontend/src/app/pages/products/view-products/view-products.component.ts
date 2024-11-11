@@ -173,14 +173,74 @@ export class ViewProductsComponent implements OnInit {
     });
   }
 
-   /**
-   *Función que genera el archivo pdf del listado de productos del inventario, incluyendo el filtrado realizado en este.
-   *
-   * @memberof UserTeacherListComponent
-   */
-   public generatePdf() {
+  /**
+  * Función que muestra una alerta para confirmar o no la exportación del productos del invetario, incluyendo el termino
+  * de busqueda en caso de haber filtado.
+  *
+  * @memberof ViewProductsComponent
+  */
+  public exportPdf(){
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger me-2"
+      },
+      buttonsStyling: false
+    });
+    swalWithBootstrapButtons.fire({
+      title: "¿Estás seguro?",
+      // el selected option por defecto deberia ser A-Z?
+      html: this.searchTerm 
+      ? `¡Estás a punto de exportar el inventario de productos!<br>Filtro aplicado: ${this.searchTerm}<br>Ordenado por: ${this.selectedOption}` 
+      : `¡Estás a punto de exportar el inventario de productos!<br>Ordenado por: ${this.selectedOption}`,
+      icon: "info",
+      showCancelButton: true,
+      confirmButtonText: "Sí, estoy seguro",
+      cancelButtonText: "No, no estoy seguro",
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.generatePdf()
+        swalWithBootstrapButtons.fire({
+          title: "¡PDF exportado!",
+          text: "El inventario de productos fue exportado con éxito.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      ;
+      } else if (
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        swalWithBootstrapButtons.fire({
+          title: "Cancelado",
+          text: "El inventario de productos no fue exportado.",
+          icon: "error",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
+    });
+  }
+
+  /**
+ *Función que genera el archivo pdf del listado de productos del inventario, incluyendo el filtrado realizado en este.
+  *
+  * @memberof ViewProductsComponent
+  */
+  public generatePdf() {
     const doc = new jsPDF();
-    doc.text('Inventario', 14, 10);
+    
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text('Inventario de productos', 14, 10);
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text('Ordenado por: '+this.selectedOption, 14, 20)
+    if(this.searchTerm){
+      doc.text('Filtrado por la busqueda: '+this.searchTerm, 14, 25);
+    }
 
     const filteredList = this.filteredList()
 
@@ -208,7 +268,7 @@ export class ViewProductsComponent implements OnInit {
     autoTable(doc,{
       head: tableHeaders,
       body: tableData,
-      startY: 20,
+      startY: this.searchTerm? 30 : 25,
       theme: 'grid',
       headStyles: {
         fillColor: [247, 145, 35],

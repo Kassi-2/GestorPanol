@@ -12,7 +12,7 @@ import { RouterLink } from '@angular/router';
 })
 export class UserOptionsComponent {
   searchTerm: string = '';
-  @Output() exportPdfEvent = new EventEmitter<void>();
+  @Output() exportPdfEvent = new EventEmitter<string>();
 
   constructor(private searchService: SearchService) {}
   /**
@@ -29,6 +29,6 @@ export class UserOptionsComponent {
    * @memberof UserOptionsComponent
    */
   exportPDF() {
-    this.exportPdfEvent.emit(); // Emitimos el evento
+    this.exportPdfEvent.emit(this.searchTerm); // Emitimos el evento
   }
 }

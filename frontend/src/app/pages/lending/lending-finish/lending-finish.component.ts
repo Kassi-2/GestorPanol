@@ -159,14 +159,75 @@ export class LendingFinishComponent {
     });
   }
 
- /**
+  /**
+  * Función que muestra una alerta para confirmar o no la exportación del listado de prestamos finalizados, incluyendo el termino
+  * de busqueda en caso de haber filtado.
+  *
+  * @memberof LendingFinishComponent
+  */
+  public exportPdf(){
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger me-2"
+      },
+      buttonsStyling: false
+    });
+    swalWithBootstrapButtons.fire({
+      title: "¿Estás seguro?",
+      html: this.searchTerm 
+      ? `¡Estás a punto de exportar la lista de préstamos finalizados!<br>Filtrado por la busqueda: ${this.searchTerm}` 
+      : "¡Estás a punto de exportar la lista de préstamos finalizados!",
+      icon: "info",
+      showCancelButton: true,
+      confirmButtonText: "Sí, estoy seguro",
+      cancelButtonText: "No, no estoy seguro",
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.generatePdf()
+        swalWithBootstrapButtons.fire({
+          title: "¡PDF exportado!",
+          text: "La lista de préstamos finalizados fue exportada con éxito.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } else if (
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        swalWithBootstrapButtons.fire({
+          title: "Cancelado",
+          text: "La lista de préstamos finalizados no fue exportada.",
+          icon: "error",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
+    });
+  }
+
+  /**
    *Función que genera el archivo pdf del listado de prestamos finalizados, incluyendo el filtrado realizado en este.
    *
-   * @memberof UserTeacherListComponent
+   * @memberof LendingFinishComponent
    */
    public generatePdf() {
     const doc = new jsPDF();
+    
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
     doc.text('Lista de préstamos finalizados', 14, 10);
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    if(this.searchTerm){
+      doc.text('Filtrado por la busqueda: '+this.searchTerm, 14, 20);
+    }
+  // agregar filtrado de fecha
+
+
+    // agregar filtrado de fecha
 
     const filteredList = this.filteredList();
 
@@ -203,14 +264,14 @@ export class LendingFinishComponent {
         ];
     });
 
-    // Esperamos a que todas las promesas se resuelvan antes de generar el PDF
+    // todas las promesas se resuelven antes de generar el PDF
     Promise.all(tableDataPromises).then((tableData) => {
         const tableHeaders = [['Id', 'Nombre del prestatario', 'Fecha de creación', 'Fecha de finalización', 'Profesor Asignado', 'Productos']];
 
         autoTable(doc, {
             head: tableHeaders,
             body: tableData,
-            startY: 20,
+            startY: this.searchTerm? 25 : 20,
             theme: 'grid',
             headStyles: {
                 fillColor: [247, 145, 35],
@@ -235,7 +296,7 @@ export class LendingFinishComponent {
         const date = new Date();
         const formattedDate = date.toISOString().split('T')[0]; // 'YYYY-MM-DD'
 
-        doc.save(`lista-prestamos-activos-${formattedDate}.pdf`);
+        doc.save(`prestamos-finalizados-${formattedDate}.pdf`);
     });
   }
 }

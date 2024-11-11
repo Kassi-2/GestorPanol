@@ -129,14 +129,72 @@ export class UserTeacherListComponent implements OnInit, OnDestroy {
     });
   }
 
-   /**
-   *Función que genera el archivo pdf del listado de profesores, incluyendo el filtrado realizado en este.
-   *
-   * @memberof UserTeacherListComponent
-   */
-  public generatePdf() {
+  /**
+  * Función que muestra una alerta para confirmar o no la exportación del listado de profesores, incluyendo el termino
+  * de busqueda en caso de haber filtado.
+  *
+  * @memberof UserTeacherListComponent
+  */
+  public exportPdf(search: string){
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger me-2"
+      },
+      buttonsStyling: false
+    });
+    swalWithBootstrapButtons.fire({
+      title: "¿Estás seguro?",
+      html: search 
+      ? `¡Estás a punto de exportar la lista de profesores!<br>Filtrado por la busqueda: ${search}` 
+      : `¡Estás a punto de exportar la lista de profesores!`,
+      icon: "info",
+      showCancelButton: true,
+      confirmButtonText: "Sí, estoy seguro",
+      cancelButtonText: "No, no estoy seguro",
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.generatePdf(search)
+        swalWithBootstrapButtons.fire({
+          title: "¡PDF exportado!",
+          text: "La lista de profesores fue exportada con éxito.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      ;
+      } else if (
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        swalWithBootstrapButtons.fire({
+          title: "Cancelado",
+          text: "La lista de profesores no fue exportada.",
+          icon: "error",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
+    });
+  }
+  
+  /**
+ *Función que genera el archivo pdf del listado de profesores, incluyendo el filtrado realizado en este.
+  *
+  * @memberof UserTeacherListComponent
+  */
+  public generatePdf(search: string) {
     const doc = new jsPDF();
-    doc.text('Lista de Profesores', 14, 10);
+    
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text('Lista de profesores', 14, 10);
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    if(search){
+      doc.text('Filtrado por la busqueda: '+search, 14, 20);
+    }
 
     const tableData = this.filteredTeacher.map(teacher => [
       teacher.rut,
@@ -149,7 +207,7 @@ export class UserTeacherListComponent implements OnInit, OnDestroy {
     autoTable(doc,{
       head: tableHeaders,
       body: tableData,
-      startY: 20,
+      startY: search? 25 : 20,
       theme: 'grid',
       headStyles: {
         fillColor: [247, 145, 35],
@@ -160,6 +218,6 @@ export class UserTeacherListComponent implements OnInit, OnDestroy {
     const date = new Date();
     const formattedDate = date.toISOString().split('T')[0]; // 'YYYY-MM-DD'
 
-    doc.save(`lista-profesores-${formattedDate}.pdf`);
+    doc.save(`profesores-${formattedDate}.pdf`);
   }
 }
