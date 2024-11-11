@@ -13,6 +13,8 @@ import Swal from 'sweetalert2';
 import { HttpClientModule } from '@angular/common/http';
 import { AddProductComponent } from '../add-product/add-product.component';
 import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
+import autoTable from 'jspdf-autotable';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-view-products',
@@ -169,5 +171,54 @@ export class ViewProductsComponent implements OnInit {
         console.error(error.error.message);
       },
     });
+  }
+
+   /**
+   *Función que genera el archivo pdf del listado de productos del inventario, incluyendo el filtrado realizado en este.
+   *
+   * @memberof UserTeacherListComponent
+   */
+   public generatePdf() {
+    const doc = new jsPDF();
+    doc.text('Inventario', 14, 10);
+
+    const filteredList = this.filteredList()
+
+    const tableData = filteredList.map(product => {
+      let state = '';
+    
+      if (product.stock > 0 && product.criticalStock < product.stock) {
+        state = 'Disponible';
+      } else if (product.stock > 0 && product.criticalStock >= product.stock) {
+        state = 'Crítico';
+      } else {
+        state = 'No disponible';
+      }
+    
+      return [
+        product.id,
+        product.name,
+        product.stock,
+        state
+      ];
+    });
+
+    const tableHeaders = [['Código', 'Nombre', 'Stock', 'Estado']];
+
+    autoTable(doc,{
+      head: tableHeaders,
+      body: tableData,
+      startY: 20,
+      theme: 'grid',
+      headStyles: {
+        fillColor: [247, 145, 35],
+        valign: 'middle',
+      },
+    })
+
+    const date = new Date();
+    const formattedDate = date.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+
+    doc.save(`Inventario-${formattedDate}.pdf`);
   }
 }

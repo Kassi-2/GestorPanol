@@ -9,6 +9,8 @@ import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { LendingOptionsComponent } from '../lending-options/lending-options.component';
 import { UserService } from '../../../core/services/user.service';
 import { HttpClientModule } from '@angular/common/http';
+import autoTable from 'jspdf-autotable';
+import jsPDF from 'jspdf';
 
 
 @Component({
@@ -157,4 +159,83 @@ export class LendingFinishComponent {
     });
   }
 
+ /**
+   *Función que genera el archivo pdf del listado de prestamos finalizados, incluyendo el filtrado realizado en este.
+   *
+   * @memberof UserTeacherListComponent
+   */
+   public generatePdf() {
+    const doc = new jsPDF();
+    doc.text('Lista de préstamos finalizados', 14, 10);
+
+    const filteredList = this.filteredList();
+
+    // arreglo de promesas para cargar los productos de cada prestamo
+    const tableDataPromises = filteredList.map(async (lending) => {
+        const isoDate = new Date(lending.date).toISOString(); // 'YYYY-MM-DDTHH:mm:ss.sssZ'
+        const date = isoDate.split('T')[0]; // 'YYYY-MM-DD'
+        const time = isoDate.split('T')[1].split(':'); // 'HH:mm:ss.sssZ'
+        const formattedDate = `${date.split('-')[2]}/${date.split('-')[1]}/${date.split('-')[0]} ${time[0]}:${time[1]}`;
+
+        const isoDateFinalized = new Date(lending.date).toISOString(); // 'YYYY-MM-DDTHH:mm:ss.sssZ'
+        const dateFinalized = isoDateFinalized.split('T')[0]; // 'YYYY-MM-DD'
+        const timeFinalized = isoDateFinalized.split('T')[1].split(':'); // 'HH:mm:ss.sssZ'
+        const formattedDateFinalized = `${dateFinalized.split('-')[2]}/${dateFinalized.split('-')[1]}/${dateFinalized.split('-')[0]} ${timeFinalized[0]}:${timeFinalized[1]}`;
+
+        let productsList = "-";
+
+        // Llamada al backend para obtener los productos del prestamo
+        const lendingDetails: any = await this.lendingService.getLendingForEdit(lending.id).toPromise();
+        if (lendingDetails && lendingDetails.lendingProducts) {
+            productsList = lendingDetails.lendingProducts.map((lendingProduct: { product: { name: any; }; amount: any; }) => 
+                `${lendingProduct.product.name} - ${lendingProduct.amount}`
+            ).join('\n');
+        }
+
+        // Devolver los datos de cada fila
+        return [
+            lending.id,
+            lending.borrower.name,
+            formattedDate,
+            formattedDateFinalized,
+            lending.teacherId ? lending.teacher.BorrowerId.name : "-", 
+            productsList
+        ];
+    });
+
+    // Esperamos a que todas las promesas se resuelvan antes de generar el PDF
+    Promise.all(tableDataPromises).then((tableData) => {
+        const tableHeaders = [['Id', 'Nombre del prestatario', 'Fecha de creación', 'Fecha de finalización', 'Profesor Asignado', 'Productos']];
+
+        autoTable(doc, {
+            head: tableHeaders,
+            body: tableData,
+            startY: 20,
+            theme: 'grid',
+            headStyles: {
+                fillColor: [247, 145, 35],
+                valign: 'middle',
+            },
+            columnStyles: {
+              2: {
+                cellWidth: 30,
+              },
+              3: {
+                cellWidth: 30,
+              },
+              4: {
+                cellWidth: 40,
+              },
+              5: {
+                  cellWidth: 30,
+              },
+            },
+        });
+
+        const date = new Date();
+        const formattedDate = date.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+
+        doc.save(`lista-prestamos-activos-${formattedDate}.pdf`);
+    });
+  }
 }
