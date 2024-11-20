@@ -1,7 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { product } from '@prisma/client';
 import { ProductCreateDTO } from './dto/product-create.dto';
+import { ProductUpdateDTO } from './dto/product-update.dto';
 
 @Injectable()
 export class ProductService {
@@ -39,6 +40,20 @@ export class ProductService {
   }
 
   //Obtener todos los productos de la tabla product de la base de datos
+  //Devuelve un array de solo los productos que tienen un stock mayor a 0
+  //y los entrega ordenados alfabéticamente por nombre
+  async getAvailableProducts(): Promise<product[]> {
+    return this.prisma.product.findMany({
+      where: {
+        stock: { gt: 0 },
+      },
+      orderBy: {
+        name: 'asc',
+      },
+    });
+  }
+
+  //Obtener todos los productos de la tabla product de la base de datos
   //Devuelve un array de solo los productos que tienen estado true=activo,
   //y los entrega ordenados alfabéticamente por nombre descendentemente
   async getActiveProductsNameDesc(): Promise<product[]> {
@@ -49,6 +64,47 @@ export class ProductService {
       orderBy: {
         name: 'asc',
       },
+    });
+  }
+
+  async updateProduct(id: number, data: ProductUpdateDTO): Promise<product> {
+    const product = await this.prisma.product.findUnique({
+      where: { id },
+    });
+    if (!product || product.state !== true) {
+      throw new NotFoundException('No se encontró el producto');
+    }
+    if (data.name && data.name !== product.name) {
+      const findProduct = await this.prisma.product.findFirst({
+        where: {
+          name: data.name,
+          id: {
+            not: id,
+          },
+        },
+      });
+
+      if (findProduct && findProduct.state === true) {
+        throw new BadRequestException('Ya existe un producto con ese nombre');
+      }
+
+      if (findProduct && findProduct.state === false) {
+        const updateName = `${findProduct.name}-${findProduct.id}`;
+        await this.prisma.product.update({
+          where: { id: findProduct.id },
+          data: {
+            name: updateName,
+          },
+        });
+        return this.prisma.product.update({
+          where: { id },
+          data,
+        });
+      }
+    }
+    return this.prisma.product.update({
+      where: { id },
+      data,
     });
   }
 
