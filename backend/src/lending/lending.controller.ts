@@ -7,8 +7,6 @@ import { LendingFinalizeDTO } from './dto/lending-finalize.dto';
 export class LendingController {
     constructor(private readonly lendingService: LendingService){}
 
-    
-
     @Get("/active-lending")
     async getActive(){
         return this.lendingService.getActiveLendings()
@@ -34,9 +32,19 @@ export class LendingController {
             const { comments } = LendingFinalizeDTO;
             return this.lendingService.finalizeLending(Number(id), comments);
         }
+    @Put("/active-pending/:id")
+    async updateFinalizeLending(@Param('id') id: string){
+        return this.lendingService.updateActivePending(Number(id))
+    }
 
     @Delete('/delete/:id')
     async deleteLending(@Param('id') id: string) {
         return this.lendingService.deleteLending(Number(id));
     }
+
+    @Delete('/delete-permanently/:id')
+    async deletePermanentlyLending(@Param('id') id: string) {
+        return this.lendingService.deletePermanentlyLending(Number(id));
+    }
+
 }

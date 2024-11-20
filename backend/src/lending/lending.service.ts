@@ -41,7 +41,7 @@ export class LendingService {
             }
         }
 
-        const lendingState = LendingState.Active;
+        const lendingState = data.teacherId ? LendingState.Pending : LendingState.Active;
 
     const lending = await this.prisma.lending.create({
         data: {
@@ -114,6 +114,22 @@ export class LendingService {
             }
           },
         });
+      }
+
+      async updateActivePending(lendingId: number):Promise<Lending>{
+        const lending = await this.prisma.lending.findUnique({
+            where: { id: lendingId },
+        });
+        if (!lending) {
+            throw new NotFoundException("Ese préstamo no existe");
+        }
+        const updateLending = await this.prisma.lending.update({
+            where: {id: lendingId},
+            data: {
+                state: LendingState.Active,
+            },
+        });
+        return updateLending;
       }
 
 
@@ -231,6 +247,46 @@ export class LendingService {
             orderBy: {
                 date: "desc",
             },
+        });
+    }
+
+    async deletePermanentlyLending(lendingId: number):Promise<Lending> {
+        const lending = await this.prisma.lending.findUnique({
+            where: { id: lendingId },
+            include: {
+                lendingProducts: {
+                    include: {
+                        product: true,
+                    },
+                },
+            },
+        });  
+        if (!lending) {
+            throw new NotFoundException("Préstamo no encontrado");
+        }
+        if (lending.state != LendingState.Pending) {
+            throw new NotFoundException("El préstamo no está pendiente para rechazar");
+        }
+        for (const lendingProduct of lending.lendingProducts) {
+            const product = lendingProduct.product;
+    
+            if (!product.fungible) {
+                await this.prisma.product.update({
+                    where: { id: product.id },
+                    data: {
+                        stock: {
+                            increment: lendingProduct.amount,
+                        },
+                    },
+                });
+            }
+        }
+        await this.prisma.lendingProduct.deleteMany({
+            where: { lendingId: lendingId },
+        });
+    
+        return this.prisma.lending.delete({
+            where: { id: lendingId },
         });
     }
 
