@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, IsNumber, IsOptional, IsArray, IsInt } from 'class-validator';
-  //revisar
-  export class LendingCreateDTO {
+  
+  export class LendingUpdateDTO {
     @IsOptional()
     @IsString()
     comments?: string;
