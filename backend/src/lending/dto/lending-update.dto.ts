@@ -1,17 +1,14 @@
-import { IsNotEmpty, IsString, IsNumber, IsOptional, IsArray, IsInt } from 'class-validator';
-  
-  export class LendingUpdateDTO {
-    @IsOptional()
-    @IsString()
-    comments?: string;
-  
-    @IsNotEmpty()
-    @IsNumber()
-    BorrowerId: number;
-  
-    @IsOptional()
-    @IsNumber()
-    teacherId?: number;
+import { IsString, IsNumber, IsOptional, IsArray } from 'class-validator';
 
-    products: { productId: number; amount: number }[]; 
+  export class LendingUpdateDTO {
+	@IsOptional()
+	@IsString()
+	comments?: string;
+
+	@IsOptional()
+	@IsNumber()
+	teacherId?: number;
+
+	@IsOptional()
+	products?: { productId: number; amount: number }[];
   }
