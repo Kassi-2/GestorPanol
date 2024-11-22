@@ -24,6 +24,7 @@ import { FormsModule } from '@angular/forms';
 import { Product } from '../../../core/models/product.interface';
 import { UserService } from '../../../core/services/user.service';
 import Swal from 'sweetalert2';
+import { UserAddComponent } from "../../users/user-add/user-add.component";
 
 
 @Component({
@@ -35,7 +36,8 @@ import Swal from 'sweetalert2';
     NgbPagination,
     CommonModule,
     FormsModule,
-  ],
+    UserAddComponent
+],
   templateUrl: './lending-add.component.html',
   styleUrls: ['./lending-add.component.css'],
 })

@@ -16,7 +16,7 @@ export class UserOptionsComponent {
 
   constructor(private searchService: SearchService) {}
   /**
-   * Función que enía al servicio el término de búsqueda que ingresó el usuario para listar los usuarios que coincidan con lo ingresado.
+   * Función que envía al servicio el término de búsqueda que ingresó el usuario para listar los usuarios que coincidan con lo ingresado.
    *
    * @memberof UserOptionsComponent
    */
