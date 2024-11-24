@@ -76,6 +76,28 @@ export class ViewProductsComponent implements OnInit {
     this.selectedOption = option;
   }
 
+  editProduct(idProduct: number) {
+    this.selectedProductId = idProduct;
+    let product!: Product;
+    // this.productService.getProductForEdit(idProduct).subscribe({
+    //   next: (response) => {
+    //     product = response;
+
+    //     this.forma.patchValue({
+    //       name: product.name,
+    //       description: product.description,
+    //       stock: product.stock,
+    //       criticalStock: product.criticalStock,
+    //       fungible: product.fungible,
+    //     });
+    //   },
+
+    //   error: (error) => {
+    //     alert(error.error.message);
+    //   },
+    // });
+  }
+
   //Este función es para evitar que se ingrese ciertos cáracteres.
   preventNegative(event: KeyboardEvent) {
     if (event.key === '-' || event.key === '+') {
@@ -169,5 +191,45 @@ export class ViewProductsComponent implements OnInit {
         console.error(error.error.message);
       },
     });
+  }
+
+  onSubmit() {
+    if (this.forma.invalid) {
+      return Object.values(this.forma.controls).forEach((control) => {
+        control.markAllAsTouched();
+      });
+    }
+
+    console.log(this.forma.value.categoryId);
+    const updatedProduct: Product = {
+      id: this.selectedProductId,
+      ...this.forma.value,
+    };
+
+    // this.productService
+    //   .updateProduct(updatedProduct.id, updatedProduct)
+    //   .subscribe({
+    //     next: (response) => {
+    //       Swal.fire({
+    //         position: 'center',
+    //         icon: 'success',
+    //         title: '¡El producto se actualizó con éxito!',
+    //         showConfirmButton: false,
+    //         timer: 1500,
+    //       });
+    //       this.getProducts();
+    //     },
+    //     error: (error) => {
+    //       Swal.fire({
+    //         icon: 'error',
+    //         title: 'Error',
+    //         text: error.error.message,
+    //         confirmButtonText: 'Aceptar',
+    //       });
+    //       return;
+    //     },
+    //   });
+
+    this.forma.reset();
   }
 }
