@@ -9,13 +9,13 @@ import { Lending } from './../../../core/models/lending.interface';
 import { FormsModule } from '@angular/forms';
 import { UserService } from './../../../core/services/user.service';
 import { HttpClientModule } from '@angular/common/http';
-
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
   selector: 'app-lending-active',
   standalone: true,
-  imports: [LendingOptionsComponent, NgbAccordionModule, CommonModule, FormsModule, NgbPagination, HttpClientModule],
+  imports: [LendingOptionsComponent, NgbAccordionModule, CommonModule, FormsModule, NgbPagination, HttpClientModule, NgbDropdownModule],
   templateUrl: './lending-active.component.html',
   styleUrl: './lending-active.component.css',
   providers: [LendingService]
@@ -30,6 +30,7 @@ export class LendingActiveComponent {
   selectedDate: string = '';
   public page = 1;
   public pageSize = 10;
+  amountAux: number = 0;
 
 
 
@@ -37,6 +38,13 @@ export class LendingActiveComponent {
 
   ngOnInit() {
     this.getLending();
+  }
+
+  editMode(): void{
+    this.isEditMode = !this.isEditMode
+    if (!this.isEditMode) {
+      this.saveChanges();
+    }
   }
 
   // Funcion para poder mostrar prestamos activos por fecha
@@ -49,6 +57,7 @@ export class LendingActiveComponent {
     });
   }
 
+
   // Funcion para poder mostrar todos los prestamos activos
   getLending(): void {
     this.lendingService.getLending().subscribe((lending: Lending[]) => {
@@ -57,12 +66,79 @@ export class LendingActiveComponent {
   }
 
   // Función para poder mostrar todos los profesores
-  private getAllTeachers() {
+  public getAllTeachers() {
     this.userService.getAllTeachers().subscribe((teachers: UserTeacher[]) => {
       this.teachers = teachers;
       console.log(teachers)
     });
   }
+
+  private editLending(amount: number){
+    this.amountAux = amount
+  }
+
+  public updateLending(): void{
+
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger"
+      },
+      buttonsStyling: false
+    });
+    swalWithBootstrapButtons.fire({
+      title: "Estas seguro?",
+      text: "¡Estas actualizando un prestamo!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Si, estoy seguro",
+      cancelButtonText: "No, deseo cancelar!",
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        console.log(this.selectedLending)
+        swalWithBootstrapButtons.fire({
+          title: "Actualizado!",
+          text: "Se actualizo el prestamo.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } else if (
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        swalWithBootstrapButtons.fire({
+          title: "Cancelado",
+          text: "Se cancelo la edición",
+          icon: "error",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
+    });
+    this.editMode()
+
+  }
+
+  incrementAmount(productIndex: number): void {
+    const product = this.selectedLending.lendingProducts[productIndex];
+    if (product.amount < product.product.stock) {
+      product.amount++;
+    }
+  }
+
+  decrementAmount(productIndex: number): void {
+    const product = this.selectedLending.lendingProducts[productIndex];
+    if (product.amount > 0) {
+      product.amount--;
+    }
+  }
+
+  saveChanges(): void {
+    console.log('Cambios guardados:', this.selectedLending);
+  }
+
 
   // Función para poder ver los prestamos activos filtrados por nombre
   filteredList(): Lending[] {
