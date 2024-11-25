@@ -2,6 +2,8 @@ import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Q
 import { LendingService } from './lending.service';
 import { LendingCreateDTO } from './dto/lending-create.dto';
 import { LendingFinalizeDTO } from './dto/lending-finalize.dto';
+import { LendingUpdateDTO } from './dto/lending-update.dto';
+import { Lending } from '@prisma/client';
 
 @Controller('lending')
 export class LendingController {
@@ -35,6 +37,11 @@ export class LendingController {
     @Put("/active-pending/:id")
     async updateFinalizeLending(@Param('id') id: string){
         return this.lendingService.updateActivePending(Number(id))
+    }
+
+    @Put('/update-lending/:id')
+    async updateLending(@Param('id') id: number, @Body() data: LendingUpdateDTO): Promise<Lending> {
+    return this.lendingService.updateLending(Number(id), data);
     }
 
     @Delete('/delete/:id')
