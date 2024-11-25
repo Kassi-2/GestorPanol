@@ -55,7 +55,7 @@ enum UserType {
 }
 
 
-model product {
+model Product {
   id        Int    @id @default(autoincrement())
   name    String
   description String?
@@ -87,7 +87,7 @@ model LendingProduct {
   productId Int
   amount  Int    
   lending   Lending  @relation(name: "lendingProducts", fields: [lendingId], references: [id])
-  product   product  @relation(name: "productLending", fields: [productId], references: [id])
+  product   Product  @relation(name: "productLending", fields: [productId], references: [id])
 
   @@id([lendingId, productId]) 
   @@unique([lendingId, productId])

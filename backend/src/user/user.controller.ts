@@ -5,8 +5,11 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Post,
+  Body,
 } from '@nestjs/common';
 import { UserService } from './user.service';
+import { UserCreateDTO } from './dto/user-create.dto';
 
 @Controller('users')
 export class UserController {
@@ -46,5 +49,11 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   public async getAllDegrees() {
     return await this.userService.getAllDegrees();
+  }
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  public async createUser(@Body() request: UserCreateDTO) {
+    return await this.userService.createUser(request);
   }
 }

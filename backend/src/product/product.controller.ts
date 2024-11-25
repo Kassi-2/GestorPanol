@@ -1,12 +1,22 @@
-import { BadRequestException, Body, Controller, Get, Post, ValidationPipe } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  ValidationPipe,
+} from '@nestjs/common';
 import { ProductService } from './product.service';
 import { ProductCreateDTO } from './dto/product-create.dto';
 
 @Controller('product')
 export class ProductController {
-    constructor(private readonly productService: ProductService) {}
+  constructor(private readonly productService: ProductService) {}
 
-    @Get('/active-name-desc')
+  @Get('/active-name-desc')
   async getActiveProductsNameDesc() {
     return this.productService.getActiveProductsNameDesc();
   }
@@ -29,5 +39,8 @@ export class ProductController {
     return this.productService.createProduct(request);
   }
 
-  
+  @Delete(':id')
+  async deleteProduct(@Param('id', ParseIntPipe) id: number) {
+    return await this.productService.deleteProduct(id);
+  }
 }
