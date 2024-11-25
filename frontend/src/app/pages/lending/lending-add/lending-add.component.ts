@@ -1,3 +1,4 @@
+import { Teacher } from './../../../core/models/user.interface';
 import { SearchService } from './../../../core/services/search.service';
 import {
   contains,
@@ -13,6 +14,7 @@ import {
   UserAssitant,
   UserTeacher,
   User,
+  UserRegister,
 } from '../../../core/models/user.interface';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
@@ -20,11 +22,11 @@ import { Subscription } from 'rxjs';
 import { Degree } from '../../../core/models/degree.interface';
 import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, FormsModule, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Product } from '../../../core/models/product.interface';
 import { UserService } from '../../../core/services/user.service';
 import Swal from 'sweetalert2';
-
+import { checkRunValidator, UserAddComponent } from "../../users/user-add/user-add.component";
 
 @Component({
   selector: 'app-lending-add',
@@ -35,7 +37,9 @@ import Swal from 'sweetalert2';
     NgbPagination,
     CommonModule,
     FormsModule,
-  ],
+    UserAddComponent,
+    ReactiveFormsModule
+],
   templateUrl: './lending-add.component.html',
   styleUrls: ['./lending-add.component.css'],
 })
@@ -63,6 +67,22 @@ export class LendingAddComponent implements OnInit {
   selectedTeacher: User | null = null;
   comments: string = '';
   lending!: newLending;
+
+  public userForm: FormGroup = new FormGroup({
+    rut: new FormControl('', [
+      Validators.required,
+      Validators.pattern('^\\d{7,8}-[\\dkK]$'),
+      checkRunValidator(), // Validación personalizada del RUT
+    ]),
+    name: new FormControl('', [Validators.required]), // Validación del nombre
+    // Los demás campos no son obligatorios por ahora
+    type: new FormControl(''), // Puede ser vacío si no es necesario
+    mail: new FormControl(''),
+    phoneNumber: new FormControl(''),
+    degree: new FormControl(''),
+    role: new FormControl(''),
+  });
+
 
   private subscriptions: Subscription = new Subscription();
 
@@ -102,6 +122,115 @@ export class LendingAddComponent implements OnInit {
     this.subscriptions.add(this.getAllAssistants());
     this.subscriptions.add(this.getAllDegrees());
     this.subscriptions.add(this.getProducts());
+  }
+
+  public register() {
+    if (this.userForm.invalid) {
+      return; // Si el formulario es inválido, no hacer nada
+    }
+
+    const user: UserRegister = {
+      rut: this.userForm.get('rut')?.value,
+      name: this.userForm.get('name')?.value,
+      type: this.userForm.get('type')?.value,
+      mail: this.userForm.get('mail')?.value,
+      phoneNumber: Number(this.userForm.get('phoneNumber')?.value),
+      degree: undefined,
+      role: undefined,
+    };
+
+    this.userService.register(user).subscribe({
+      next: () => {
+        window.location.reload(); // Recargar la página
+        this.clearForm(); // Limpiar el formulario
+      },
+      error: (error) => {
+        alert(error.error.message);
+        window.location.reload();
+      },
+    });
+  }
+
+
+  get notValidRole() {
+    return (
+      this.userForm.get('role')?.invalid && this.userForm.get('role')?.touched
+    );
+  }
+  get notValidRut() {
+    const rutControl = this.userForm.get('rut');
+    console.log('Rut valid:', rutControl?.valid);
+    return rutControl?.invalid && rutControl?.touched;
+  }
+
+
+  get notValidName() {
+    return (
+      this.userForm.get('name')?.invalid && this.userForm.get('name')?.touched
+    );
+  }
+
+  get notValidType() {
+    return (
+      this.userForm.get('type')?.invalid && this.userForm.get('type')?.touched
+    );
+  }
+
+  get notValidMail() {
+    return (
+      this.userForm.get('mail')?.invalid && this.userForm.get('mail')?.touched
+    );
+  }
+
+  get notValidPhoneNumber() {
+    return (
+      this.userForm.get('phoneNumber')?.invalid &&
+      this.userForm.get('phoneNumber')?.touched
+    );
+  }
+
+  checkRunValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const isValid = this.checkRun(control.value);
+      return isValid ? null : { invalidRun: true };
+    };
+  }
+
+  checkRun(run: string): boolean {
+    run = run.replace('-', '');
+
+    const cdEntered = run.slice(-1).toUpperCase();
+    const number = run.slice(0, -1);
+
+    let add = 0;
+    let factor = 2;
+    for (let i = number.length - 1; i >= 0; i--) {
+      add += parseInt(number.charAt(i)) * factor;
+      factor = factor === 7 ? 2 : factor + 1;
+    }
+    const cdExpected = 11 - (add % 11);
+    const cdCalculated =
+      cdExpected === 11 ? '0' : cdExpected === 10 ? 'K' : cdExpected.toString();
+
+    return cdEntered === cdCalculated;
+  }
+
+  get notValidDegree() {
+    return (
+      this.userForm.get('degree')?.invalid &&
+      this.userForm.get('degree')?.touched
+    );
+  }
+  public clearForm() {
+    this.userForm.reset({
+      rut: '',
+      name: '',
+      type: '',
+      mail: '',
+      phoneNumber: '',
+      degree: '',
+      role: '',
+    });
   }
   /**
    * Función para obtener los productos almacenados.

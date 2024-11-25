@@ -8,6 +8,8 @@ import { ViewProductsComponent } from './pages/products/view-products/view-produ
 import { UserStudentListComponent } from './pages/users/user-student-list/user-student-list.component';
 import { UserTeacherListComponent } from './pages/users/user-teacher-list/user-teacher-list.component';
 import { UserAssistantListComponent } from './pages/users/user-assistant-list/user-assistant-list.component';
+import { LendingPendingComponent } from './pages/lending/lending-pending/lending-pending.component';
+LendingPendingComponent
 
 export const routes: Routes = [
   {
@@ -32,6 +34,10 @@ export const routes: Routes = [
   {
     path: 'users/assistants',
     component: UserAssistantListComponent,
+  },
+  {
+    path: 'lendings/pending',
+    component: LendingPendingComponent,
   },
 
   { path: '**', redirectTo: 'lendings/active' },

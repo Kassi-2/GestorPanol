@@ -18,6 +18,17 @@ import { Observable } from 'rxjs';
 export class UserService {
   constructor(private http: HttpClient) {}
   private apiUrl = 'http://localhost:3000/users';
+
+   /**
+   *Función que recibe un usuario y lo ingresa en la base de datos.
+   *
+   * @param {UserRegister} user
+   * @return {*}
+   * @memberof UserService
+   */
+   public register(user: UserRegister) {
+    return this.http.post(`${this.apiUrl}`, user);
+  }
   /**
    *Función que devuelve una lista de tipo Estudiante de todos los usuarios de ese tipo registrados en la base de datos.
    *
