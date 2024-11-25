@@ -420,6 +420,119 @@
 </div>
 }
 
+
+<div class="modal fade" id="modalAddUser" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" [formGroup]="userForm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Registrar Usuario</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <div>
+            <label for="formGroupExampleInput" class="form-label">Run</label>
+            <button type="button" class="myButton" placement="end"
+            ngbPopover="Run sin puntos, con guión y dígito verificador. Ejemplo: 12345678-9"
+            popoverTitle="Formato de RUN">?</button>
+          </div>
+          <input [class.is-invalid]='notValidRut' type="text" class="form-control" id="run" formControlName="rut"
+            placeholder="Rut">
+          @if (notValidRut) {
+            <small class="text-danger">Ingrese un rut.</small>
+          }
+        </div>
+        <div class="mb-3">
+          <label for="formGroupExampleInput" class="form-label">Nombre Completo</label>
+          <input [class.is-invalid]='notValidName' type="text" class="form-control" id="formGroupExampleInput"
+            formControlName="name" placeholder="Nombre Completo">
+          @if (notValidName) {
+            <small class="text-danger">Ingrese un nombre.</small>
+          }
+        </div>
+        <div class="mb-3">
+          <label for="formGroupExampleInput" class="form-label">Tipo de Usuario</label>
+          <input type="text" placeholder="Profesor" class="form-control" disabled>
+        </div>
+
+
+        <div class="mb-3">
+          <label for="formGroupExampleInput" class="form-label">Correo Electrónico</label>
+          <input [class.is-invalid]='notValidMail' type="text" class="form-control" id="formGroupExampleInput2"
+            formControlName="mail" placeholder="ejemplo@ejemplo.com">
+          @if (notValidMail) {
+          <small class="text-danger">Ingrese un correo electrónico.</small>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label for="formGroupExampleInput" class="form-label">Número de celular</label>
+          <div class="input-group">
+            <div class="input-group-text">+56 </div>
+            <input [class.is-invalid]='notValidPhoneNumber' type="text" class="form-control"
+              id="specificSizeInputGroupUsername" formControlName="phoneNumber" pattern="[0-9]{9}" placeholder="">
+          </div>
+          @if (notValidPhoneNumber) {
+            <small class="text-danger">Ingrese un Número de celular.</small>
+          }
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal" (click)="clearForm()">Cancelar</button>
+        <button
+  type="submit"
+  class="btn btn-primary"
+  [disabled]="!userForm.get('rut')?.valid || !userForm.get('name')?.valid"
+  data-bs-target="#modalConfirmation" data-bs-toggle="modal">
+  Registrar
+</button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalConfirmation" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2"
+  tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Confirmar Datos del Usuario</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Estás seguro que deseas registrar al usuario:</p>
+        <ul>
+          <li><strong>Rut:</strong> {{ userForm.get('rut')?.value }}</li>
+          <li><strong>Nombre Completo:</strong> {{ userForm.get('name')?.value }}</li>
+          @if (userForm.get('type')?.value === 'Student') {
+          <li><strong>Tipo de Usuario:</strong> Estudiante</li>
+          <li><strong>Carrera:</strong> {{ getDegree(userForm.get('degree')?.value) }}</li>
+          } @else if (userForm.get('type')?.value === 'Assistant') {
+          <li><strong>Tipo de Usuario:</strong> Asistente</li>
+          <li><strong>Cargo:</strong> {{ userForm.get('role')?.value }}</li>
+          } @else {
+          <li><strong>Tipo de Usuario:</strong> Profesor</li>
+          }
+          @if(userForm.get('mail')?.value){
+            <li><strong>Correo Electrónico:</strong> {{ userForm.get('mail')?.value }}</li>
+          }
+          @if(userForm.get('phoneNumber')?.value){
+            <li><strong>Número de celular:</strong> +56 9 {{ userForm.get('phoneNumber')?.value }}</li>
+          }
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-target="#modalAddUser" data-bs-toggle="modal">Cancelar</button>
+        <button class="btn btn-primary" data-bs-toggle="modal" (click)="register()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 <div class="form-group mt-3" style="margin-left: 8%">
   <label for="comments" style="margin-bottom: 1%">Comentarios:</label>
   <textarea
