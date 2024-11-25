@@ -46,6 +46,7 @@ export class UserAddComponent implements OnInit, OnDestroy {
       checkRunValidator(),
     ]),
     name: new FormControl('', [Validators.required]),
+    type: new FormControl('', [Validators.required]),
     mail: new FormControl('', Validators.email),
     phoneNumber: new FormControl(),
     degree: new FormControl(),
@@ -87,6 +88,7 @@ export class UserAddComponent implements OnInit, OnDestroy {
   private getAllDegrees() {
     this.userService.getAllDegrees().subscribe((degrees: Degree[]) => {
       this.degrees = degrees;
+      console.log(this.degrees)
     });
   }
   /**

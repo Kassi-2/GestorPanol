@@ -1,4 +1,3 @@
-
 <div class="modal fade" id="modalAddUser" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" [formGroup]="userForm">
     <div class="modal-content">
@@ -119,15 +118,9 @@
         <ul>
           <li><strong>Rut:</strong> {{ userForm.get('rut')?.value }}</li>
           <li><strong>Nombre Completo:</strong> {{ userForm.get('name')?.value }}</li>
-          @if (userForm.get('type')?.value === 'Student') {
-          <li><strong>Tipo de Usuario:</strong> Estudiante</li>
-          <li><strong>Carrera:</strong> {{ getDegree(userForm.get('degree')?.value) }}</li>
-          } @else if (userForm.get('type')?.value === 'Assistant') {
-          <li><strong>Tipo de Usuario:</strong> Asistente</li>
-          <li><strong>Cargo:</strong> {{ userForm.get('role')?.value }}</li>
-          } @else {
+
           <li><strong>Tipo de Usuario:</strong> Profesor</li>
-          }
+
           @if(userForm.get('mail')?.value){
             <li><strong>Correo Electrónico:</strong> {{ userForm.get('mail')?.value }}</li>
           }
@@ -143,4 +136,3 @@
     </div>
   </div>
 </div>
-
