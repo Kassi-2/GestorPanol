@@ -7,6 +7,32 @@ import { LendingCreateDTO } from './dto/lending-create.dto';
 export class LendingService {
     constructor(private prisma: PrismaService) {}
 
+    async getPendingLendings(): Promise<Lending[]> {
+        return this.prisma.lending.findMany({
+            where: {
+                state: LendingState.Pending,
+            },
+            include: {
+                borrower: { 
+                    select: {
+                      name: true,
+                    },
+                  },
+                  teacher: { 
+                    select: {
+                      BorrowerId: {
+                        select: {
+                          name: true,
+                        },
+                      },
+                    },
+                  },
+            },
+            orderBy: {
+                date: "desc",
+            },
+        });
+    }
 
     async createLending(data: LendingCreateDTO) {
         if (data.teacherId) {

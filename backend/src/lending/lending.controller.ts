@@ -7,7 +7,10 @@ import { LendingFinalizeDTO } from './dto/lending-finalize.dto';
 export class LendingController {
     constructor(private readonly lendingService: LendingService){}
 
-    
+    @Get("/pending-lending")
+    async getPending(){
+        return this.lendingService.getPendingLendings()
+    }
 
     @Get("/active-lending")
     async getActive(){
