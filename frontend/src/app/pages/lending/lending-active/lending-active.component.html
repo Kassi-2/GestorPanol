@@ -75,21 +75,35 @@
         <p><strong>Nombre del prestatario:</strong>{{ selectedLending?.borrower.name }}.</p>
         <p><strong>Fecha de creación:</strong> {{ selectedLending?.date | date:'dd/MM/yyyy HH:mm' }} hrs.</p>
           @if (selectedLending?.teacherId != null) {
-            @if (isEditMode) {
-              <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Dropdown button
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <a class="dropdown-item" href="#">Another action</a>
-                  <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-              </div>
             <p><strong>Profesor asignado:</strong>
-              {{ selectedLending?.teacher.BorrowerId.name }}.
+              @if (!isEditMode) {
+                {{ selectedLending?.teacher.BorrowerId.name }}.
+              }
+              @else {
+                <div class="row">
+                  <div class="col">
+                    <div ngbDropdown class="d-inline-block">
+                      <!-- Botón que muestra el profesor seleccionado -->
+                      <button type="button" class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle (click)="getAllTeachers()">
+                        {{ selectedLending?.teacher?.BorrowerId?.name || 'Seleccionar profesor' }}
+                      </button>
+
+                      <!-- Lista desplegable con las opciones -->
+                      <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                        @for (teacher of teachers; track $index) {
+                          <button
+                            ngbDropdownItem
+                            (click)="selectTeacher(teacher)">
+                            {{ teacher.name }}
+                          </button>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
             </p>
-          }
+
           }
         <p><strong>Comentario: </strong>
         @if (!isEditMode) {

@@ -9,13 +9,13 @@ import { Lending } from './../../../core/models/lending.interface';
 import { FormsModule } from '@angular/forms';
 import { UserService } from './../../../core/services/user.service';
 import { HttpClientModule } from '@angular/common/http';
-
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
   selector: 'app-lending-active',
   standalone: true,
-  imports: [LendingOptionsComponent, NgbAccordionModule, CommonModule, FormsModule, NgbPagination, HttpClientModule],
+  imports: [LendingOptionsComponent, NgbAccordionModule, CommonModule, FormsModule, NgbPagination, HttpClientModule, NgbDropdownModule],
   templateUrl: './lending-active.component.html',
   styleUrl: './lending-active.component.css',
   providers: [LendingService]
@@ -66,7 +66,7 @@ export class LendingActiveComponent {
   }
 
   // Función para poder mostrar todos los profesores
-  private getAllTeachers() {
+  public getAllTeachers() {
     this.userService.getAllTeachers().subscribe((teachers: UserTeacher[]) => {
       this.teachers = teachers;
       console.log(teachers)
