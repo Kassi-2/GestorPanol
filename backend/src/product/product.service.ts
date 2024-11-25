@@ -14,6 +14,7 @@ export class ProductService {
   //revisa en los productos eliminados si ya existía un producto con el mismo nombre
   //si existía se actualizan los valores por los nuevos ingresados
   async createProduct(data: ProductCreateDTO): Promise<product> {
+    try{
     const buscarProduct = await this.prisma.product.findUnique({
       where: {
         name: data.name,
@@ -37,6 +38,9 @@ export class ProductService {
     return this.prisma.product.create({
       data,
     });
+  } catch (error) {
+    throw (error);
+  }
   }
 
   //Obtener todos los productos de la tabla product de la base de datos
@@ -68,7 +72,8 @@ export class ProductService {
   }
 
   async updateProduct(id: number, data: ProductUpdateDTO): Promise<product> {
-    const product = await this.prisma.product.findUnique({
+    try{
+      const product = await this.prisma.product.findUnique({
       where: { id },
     });
     if (!product || product.state !== true) {
@@ -107,5 +112,8 @@ export class ProductService {
       data,
     });
   }
-
+ catch (error) {
+  throw (error);
+}
+  }
 }

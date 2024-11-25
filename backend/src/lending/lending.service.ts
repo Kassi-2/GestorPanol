@@ -10,6 +10,7 @@ export class LendingService {
 
 
     async createLending(data: LendingCreateDTO) {
+        try{
         if (data.teacherId) {
             const teacher = await this.prisma.teacher.findUnique({
                 where: { id: data.teacherId },
@@ -77,6 +78,9 @@ export class LendingService {
             });
         }
         return lending;
+    } catch (error) {
+        throw (error);
+      }
     }   
     
     async getLendingById(id: number): Promise<Lending> {
@@ -118,6 +122,7 @@ export class LendingService {
       }
 
       async updateActivePending(lendingId: number):Promise<Lending>{
+        try{
         const lending = await this.prisma.lending.findUnique({
             where: { id: lendingId },
         });
@@ -131,6 +136,9 @@ export class LendingService {
             },
         });
         return updateLending;
+    } catch (error) {
+        throw (error);
+      }
       }
 
 
@@ -138,6 +146,7 @@ export class LendingService {
     //además le asigna le fecha en la que se finalizó y devuelve los
     //productos que no son fungibles al stock, se pueden agregar comentarios
     async finalizeLending(lendingId: number, comments?: string): Promise<Lending>{
+        try{
         const lending = await this.prisma.lending.findUnique({
             where: { id: lendingId },
             include: {
@@ -176,6 +185,9 @@ export class LendingService {
         }
 
         return updatedLending;
+    } catch (error) {
+        throw (error);
+      }
     }
 
     //función que cambia el estado de un préstamo a Inactive, además agrega la fecha 
@@ -323,6 +335,7 @@ export class LendingService {
 
       //Actualiza un préstamo, se pueden agregar y eliminar productos
       async updateLending(lendingId: number, data: LendingUpdateDTO): Promise<Lending> {
+        try{
     	const lending = await this.prisma.lending.findUnique({
         	where: { id: lendingId },
         	include: {
@@ -440,5 +453,8 @@ export class LendingService {
     	});
     
     	return updatedLending;
+    } catch (error) {
+        throw (error);
+      }
 	}
 }

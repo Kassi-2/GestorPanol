@@ -20,4 +20,5 @@ export class ProductUpdateDTO {
   @IsOptional()
   @IsBoolean()
   fungible: boolean;
+
 }
