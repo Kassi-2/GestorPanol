@@ -44,3 +44,42 @@
   width: 18px;
   height: 18px;
 }
+
+/* Contenedor del contador */
+.counter-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; /* Espaciado entre elementos */
+}
+
+/* Botones redondos */
+.btn-outline-orange {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%; /* Hace que los botones sean circulares */
+  border: 2px solid #F79123; /* Borde naranja */
+  color: #F79123; /* Texto naranja */
+  font-size: 1.2rem; /* Tamaño de la fuente */
+  font-weight: bold;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+/* Efecto hover para los botones */
+.btn-outline-orange:hover {
+  background-color: #F79123; /* Fondo naranja */
+  color: white; /* Texto blanco */
+  cursor: pointer;
+}
+
+/* Efecto active al hacer clic */
+.btn-outline-orange:active {
+  background-color: #F57C00; /* Fondo naranja más oscuro */
+  border-color: #E65100; /* Borde más oscuro */
+}
+
+

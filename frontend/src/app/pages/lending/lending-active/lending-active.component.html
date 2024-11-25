@@ -72,22 +72,42 @@
       </div>
       <div class="modal-body">
         <p><strong>ID:</strong> {{ selectedLending?.id }}.</p>
-        <p><strong>Nombre del prestatario:</strong> {{ selectedLending?.borrower.name }}.</p>
+        <p><strong>Nombre del prestatario:</strong>{{ selectedLending?.borrower.name }}.</p>
         <p><strong>Fecha de creación:</strong> {{ selectedLending?.date | date:'dd/MM/yyyy HH:mm' }} hrs.</p>
           @if (selectedLending?.teacherId != null) {
+            @if (isEditMode) {
+              <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Dropdown button
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <a class="dropdown-item" href="#">Action</a>
+                  <a class="dropdown-item" href="#">Another action</a>
+                  <a class="dropdown-item" href="#">Something else here</a>
+                </div>
+              </div>
             <p><strong>Profesor asignado:</strong>
-
               {{ selectedLending?.teacher.BorrowerId.name }}.
-
             </p>
           }
-
-
-        <p><strong>Comentario: </strong> {{ selectedLending?.comments}}</p>
+          }
+        <p><strong>Comentario: </strong>
+        @if (!isEditMode) {
+          {{ selectedLending.comments}}
+          } @else {
+            <input
+            id="borrowerName"
+            type="text"
+            class="form-control"
+            [(ngModel)]="selectedLending.comments" />
+          }</p>
         <table class="table">
           <thead>
             <tr>
               <th scope="col" class="text-center">Producto</th>
+              @if (isEditMode) {
+                <th scope="col" class="text-center">stock</th>
+              }
               <th scope="col" class="text-center">Cantidad</th>
             </tr>
           </thead>
@@ -95,7 +115,22 @@
             @for (lending of selectedLending?.lendingProducts; track lending; let i = $index) {
             <tr>
               <td class="text-center">{{selectedLending?.lendingProducts[i].product.name}}</td>
-              <td class="text-center">{{selectedLending?.lendingProducts[i].amount}}</td>
+              @if (isEditMode) {
+                <td class="text-center">{{selectedLending?.lendingProducts[i].product.stock}}</td>
+              }
+              <td class="text-center">
+                @if (isEditMode) {
+                  <div class="counter-container">
+                  <button type="button" class="btn btn-outline-orange" (click)="decrementAmount(i)">-</button>
+
+                {{selectedLending?.lendingProducts[i].amount}}
+                <button type="button" class="btn btn-outline-orange" (click)="incrementAmount(i)">+</button>
+              </div>
+              }
+                @else {
+                  {{selectedLending?.lendingProducts[i].amount}}
+                }
+              </td>
             </tr>
             }
           </tbody>
@@ -103,6 +138,12 @@
       </div>
 
       <div class="modal-footer">
+        @if (!isEditMode) {
+        <button type="button" class="btn btn-success" (click)="editMode()">Editar</button>
+        }
+        @else {
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal" (click)="updateLending()">Guardar</button>
+        }
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
       </div>
     </div>
