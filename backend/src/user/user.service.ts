@@ -1,6 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Borrower, Degree } from '@prisma/client';
+import { Borrower, Degree, UserType } from '@prisma/client';
+import { UserUpdateDTO } from './dto/user-update.dto';
+import { UserCreateDTO } from './dto/user-create.dto';
 
 @Injectable()
 export class UserService {
@@ -80,5 +86,166 @@ export class UserService {
   //Devuelve una promesa que contendra un array de carreras
   public async getAllDegrees(): Promise<Degree[]> {
     return this.prismaService.degree.findMany();
+  }
+
+  public async createUser(user: UserCreateDTO): Promise<Borrower> {
+    const existUser = await this.prismaService.borrower.findUnique({
+      where: { rut: user.rut.toUpperCase() },
+    });
+
+    if (existUser) {
+      return this.updateUser(existUser.id, user);
+    }
+    try {
+      const borrower: Borrower = await this.prismaService.borrower.create({
+        data: {
+          rut: user.rut.toUpperCase(),
+          name: user.name.toUpperCase(),
+          mail: user.mail ? user.mail.toLowerCase() : undefined,
+          phoneNumber: user.phoneNumber,
+          type: user.type,
+        },
+      });
+
+      switch (user.type) {
+        case UserType.Student:
+          await this.prismaService.student.create({
+            data: {
+              id: borrower.id,
+              codeDegree: user.degree,
+            },
+          });
+          break;
+
+        case UserType.Teacher:
+          await this.prismaService.teacher.create({
+            data: {
+              id: borrower.id,
+            },
+          });
+          break;
+
+        case UserType.Assistant:
+          await this.prismaService.assistant.create({
+            data: {
+              id: borrower.id,
+              role: user.role,
+            },
+          });
+          break;
+      }
+      return borrower;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  //Actualizar un usuario mediante su id
+  //Devuelve una promesa que contendra al usuario editado
+  //verifica si el usuario existe, en caso de que no exista
+  //devuelve un error, si existe entonces actualiza la informacion
+  //del usuarios con los valores que se ingresaron
+  public async updateUser(id: number, user: UserUpdateDTO): Promise<Borrower> {
+    try {
+      const existUser = await this.prismaService.borrower.findUnique({
+        where: { id },
+      });
+
+      if (!existUser) {
+        throw new NotFoundException('El usuario no existe');
+      }
+      if (existUser.type != user.type && user.type != undefined) {
+        switch (user.type) {
+          case UserType.Student:
+            if (!user.degree) {
+              throw new BadRequestException(
+                'Los usuarios de tipo estudiante deben tener una carrera',
+              );
+            }
+            await this.prismaService.student.create({
+              data: {
+                id: existUser.id,
+                codeDegree: user.degree,
+              },
+            });
+            break;
+          case UserType.Teacher:
+            await this.prismaService.teacher.create({
+              data: {
+                id: existUser.id,
+              },
+            });
+            break;
+          case UserType.Assistant:
+            if (!user.role) {
+              throw new BadRequestException(
+                'Los usuarios de tipo asistente deben tener un rol',
+              );
+            }
+            await this.prismaService.assistant.create({
+              data: {
+                id: existUser.id,
+                role: user.role,
+              },
+            });
+            break;
+        }
+
+        switch (existUser.type) {
+          case UserType.Student:
+            await this.prismaService.student.delete({
+              where: { id },
+            });
+            break;
+          case UserType.Teacher:
+            await this.prismaService.teacher.delete({
+              where: { id },
+            });
+            break;
+          case UserType.Assistant:
+            await this.prismaService.assistant.delete({
+              where: { id },
+            });
+        }
+
+        const userUpdate = this.prismaService.borrower.update({
+          where: { id },
+          data: {
+            state: true,
+            rut: user.rut.toUpperCase(),
+            name: user.name.toUpperCase(),
+            mail: user.mail ? user.mail.toLowerCase() : undefined,
+            phoneNumber: user.phoneNumber,
+            type: user.type,
+          },
+        });
+        return userUpdate;
+      } else {
+        if (user.degree && existUser.type === 'Student') {
+          await this.prismaService.student.update({
+            where: { id },
+            data: { codeDegree: user.degree },
+          });
+        } else if (existUser.type === 'Assistant' && user.role) {
+          await this.prismaService.assistant.update({
+            where: { id },
+            data: { role: user.role },
+          });
+        }
+        const userUpdate = this.prismaService.borrower.update({
+          where: { id },
+          data: {
+            state: true,
+            rut: user.rut.toUpperCase(),
+            name: user.name.toUpperCase(),
+            mail: user.mail ? user.mail.toLowerCase() : undefined,
+            phoneNumber: user.phoneNumber,
+          },
+        });
+        return userUpdate;
+      }
+    } catch (error) {
+      throw error;
+    }
   }
 }

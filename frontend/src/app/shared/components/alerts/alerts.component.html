@@ -1,0 +1,36 @@
+<ul class="dropdown-menu p-4 text-body-secondary dropdown-menu-end" style="min-width:300px;">
+    <li class="dropdown-tittle"><h4>Notificaciones</h4></li>
+    <li><hr class="dropdown-divider"></li>
+    <div class="overflow-auto" style="max-height: 350px;">
+@for (alert of alerts; track $index) {
+    <li>
+        <a href="/lendings/active" class="d-flex p-2 my-2 text-decoration-none text-body-secondary rounded" [ngStyle]="{'background-color': alert.state ? '' : '#aaaaaa'}" (click)="markAsViewed(alert.id)">
+            <div>
+                <div class="d-flex justify-content-between">
+                    <h6>{{alert.name}}</h6>
+                    <span type="button" class="btn-close" (click)="deleteAlert(alert.id)"></span>
+                </div>
+                <small>{{alert.description}}</small>
+                <div class="text-end">
+                    <small class="text-end">{{getDaysAgo(alert.date)}}</small>
+                </div>
+            </div>
+        </a>
+    </li>
+    }
+    </div>
+</ul>
+
+<div class="toast-container position-fixed top-2 end-0 p-3">
+    <div class="toast" id="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <i class="bi bi-bell"></i>
+        <strong class="me-auto">{{alert.name}}</strong>
+        <small class="text-body-secondary">Ahora</small>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        {{alert.description}}
+      </div>
+    </div>
+</div>
