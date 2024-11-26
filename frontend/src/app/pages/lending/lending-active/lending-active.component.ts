@@ -23,7 +23,7 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
   providers: [LendingService]
 })
 export class LendingActiveComponent {
-  selectedLending: any;
+  selectedLending:any;
   resetLending: any;
   searchTerm: string = '';
   lending: Lending[] = [];
@@ -33,8 +33,6 @@ export class LendingActiveComponent {
   public page = 1;
   public pageSize = 10;
   amountAux: number = 0;
-
-
 
   constructor(private lendingService: LendingService, private userService: UserService) {}
 
@@ -88,20 +86,20 @@ export class LendingActiveComponent {
       buttonsStyling: false
     });
     swalWithBootstrapButtons.fire({
-      title: "Estas seguro?",
-      text: "¡Estas actualizando un prestamo!",
+      title: "¿Estás seguro?",
+      text: "¡Estás actualizando un préstamo!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Si, estoy seguro",
-      cancelButtonText: "No, deseo cancelar!",
+      confirmButtonText: "Sí, estoy seguro",
+      cancelButtonText: "¡No, deseo cancelar!",
       reverseButtons: true
     }).then((result) => {
       if (result.isConfirmed) {
 
         console.log(this.selectedLending)
         swalWithBootstrapButtons.fire({
-          title: "Actualizado!",
-          text: "Se actualizo el prestamo.",
+          title: "¡Actualizado!",
+          text: "Se actualizó el préstamo.",
           icon: "success",
           timer: 1500,
           showConfirmButton: false,
@@ -111,7 +109,7 @@ export class LendingActiveComponent {
       ) {
         swalWithBootstrapButtons.fire({
           title: "Cancelado",
-          text: "Se cancelo la edición",
+          text: "Se canceló la edición",
           icon: "error",
           timer: 1500,
           showConfirmButton: false,
