@@ -1,11 +1,12 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserCreateDTO } from './dto/user-create.dto';
-import { Borrower, Degree, UserType} from '@prisma/client';
+import { Borrower, Degree, UserType } from '@prisma/client';
 import { UserUpdateDTO } from './dto/user-update.dto';
 
 @Injectable()
@@ -204,11 +205,10 @@ export class UserService {
     const existUser = await this.prismaService.borrower.findUnique({
       where: { rut: user.rut.toUpperCase() },
     });
-  
+
     if (existUser) {
-      return existUser;
+      return this.updateUser(existUser.id, user);
     }
-  
     try {
       const borrower: Borrower = await this.prismaService.borrower.create({
         data: {
@@ -219,7 +219,7 @@ export class UserService {
           type: user.type,
         },
       });
-  
+
       switch (user.type) {
         case UserType.Student:
           await this.prismaService.student.create({
@@ -229,7 +229,7 @@ export class UserService {
             },
           });
           break;
-  
+
         case UserType.Teacher:
           await this.prismaService.teacher.create({
             data: {
@@ -237,7 +237,7 @@ export class UserService {
             },
           });
           break;
-  
+
         case UserType.Assistant:
           await this.prismaService.assistant.create({
             data: {
@@ -247,10 +247,9 @@ export class UserService {
           });
           break;
       }
-  
       return borrower;
     } catch (error) {
-      throw error;
+      throw new InternalServerErrorException(error);
     }
   }
 
