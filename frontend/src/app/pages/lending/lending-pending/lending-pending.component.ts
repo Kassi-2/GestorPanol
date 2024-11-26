@@ -8,7 +8,8 @@ import Swal from 'sweetalert2';
 import { LendingService } from '../../../core/services/lending.service';
 import { UserService } from '../../../core/services/user.service';
 import { LendingOptionsComponent } from '../lending-options/lending-options.component';
-
+import autoTable from 'jspdf-autotable';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-lending-pending',
@@ -154,6 +155,147 @@ export class LendingPendingComponent {
           showConfirmButton: false,
         });
       }
+    });
+  }
+
+   /**
+  * Función que muestra una alerta para confirmar o no la exportación del listado de prestamos finalizados, incluyendo el termino
+  * de busqueda en caso de haber filtado.
+  *
+  * @memberof LendingFinishComponent
+  */
+   public exportPdf(){
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger me-2"
+      },
+      buttonsStyling: false
+    });
+    swalWithBootstrapButtons.fire({
+      title: "¿Estás seguro?",
+      html: this.searchTerm 
+      ? `¡Estás a punto de exportar la lista de préstamos pendientes!<br>Filtrado por la busqueda: ${this.searchTerm}` 
+      : "¡Estás a punto de exportar la lista de préstamos pendientes!",
+      icon: "info",
+      showCancelButton: true,
+      confirmButtonText: "Sí, estoy seguro",
+      cancelButtonText: "No, no estoy seguro",
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.generatePdf()
+        swalWithBootstrapButtons.fire({
+          title: "¡PDF exportado!",
+          text: "La lista de préstamos pendientes fue exportada con éxito.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } else if (
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        swalWithBootstrapButtons.fire({
+          title: "Cancelado",
+          text: "La lista de préstamos pendientes no fue exportada.",
+          icon: "error",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
+    });
+  }
+
+  /**
+   *Función que genera el archivo pdf del listado de prestamos finalizados, incluyendo el filtrado realizado en este.
+   *
+   * @memberof LendingFinishComponent
+   */
+   public generatePdf() {
+    const doc = new jsPDF();
+    
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text('Lista de préstamos pendientes', 14, 10);
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    if(this.searchTerm){
+      doc.text('Filtrado por la busqueda: '+this.searchTerm, 14, 20);
+    }
+  // agregar filtrado de fecha
+
+
+    // agregar filtrado de fecha
+
+    const filteredList = this.filteredList();
+
+    // arreglo de promesas para cargar los productos de cada prestamo
+    const tableDataPromises = filteredList.map(async (lending) => {
+        const isoDate = new Date(lending.date).toISOString(); // 'YYYY-MM-DDTHH:mm:ss.sssZ'
+        const date = isoDate.split('T')[0]; // 'YYYY-MM-DD'
+        const time = isoDate.split('T')[1].split(':'); // 'HH:mm:ss.sssZ'
+        const formattedDate = `${date.split('-')[2]}/${date.split('-')[1]}/${date.split('-')[0]} ${time[0]}:${time[1]}`;
+
+        const isoDateFinalized = new Date(lending.date).toISOString(); // 'YYYY-MM-DDTHH:mm:ss.sssZ'
+        const dateFinalized = isoDateFinalized.split('T')[0]; // 'YYYY-MM-DD'
+        const timeFinalized = isoDateFinalized.split('T')[1].split(':'); // 'HH:mm:ss.sssZ'
+        const formattedDateFinalized = `${dateFinalized.split('-')[2]}/${dateFinalized.split('-')[1]}/${dateFinalized.split('-')[0]} ${timeFinalized[0]}:${timeFinalized[1]}`;
+
+        let productsList = "-";
+
+        // Llamada al backend para obtener los productos del prestamo
+        const lendingDetails: any = await this.lendingService.getLendingForEdit(lending.id).toPromise();
+        if (lendingDetails && lendingDetails.lendingProducts) {
+            productsList = lendingDetails.lendingProducts.map((lendingProduct: { product: { name: any; }; amount: any; }) => 
+                `${lendingProduct.product.name} - ${lendingProduct.amount}`
+            ).join('\n');
+        }
+
+        // Devolver los datos de cada fila
+        return [
+            lending.id,
+            lending.borrower.name,
+            formattedDate,
+            formattedDateFinalized,
+            lending.teacherId ? lending.teacher.BorrowerId.name : "-", 
+            productsList
+        ];
+    });
+
+    // todas las promesas se resuelven antes de generar el PDF
+    Promise.all(tableDataPromises).then((tableData) => {
+        const tableHeaders = [['Id', 'Nombre del prestatario', 'Fecha', 'Profesor Asignado', 'Productos']];
+
+        autoTable(doc, {
+            head: tableHeaders,
+            body: tableData,
+            startY: this.searchTerm? 25 : 20,
+            theme: 'grid',
+            headStyles: {
+                fillColor: [247, 145, 35],
+                valign: 'middle',
+            },
+            columnStyles: {
+              2: {
+                cellWidth: 30,
+              },
+              3: {
+                cellWidth: 30,
+              },
+              4: {
+                cellWidth: 40,
+              },
+              5: {
+                  cellWidth: 30,
+              },
+            },
+        });
+
+        const date = new Date();
+        const formattedDate = date.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+
+        doc.save(`prestamos-pendientes-${formattedDate}.pdf`);
     });
   }
 

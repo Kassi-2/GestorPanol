@@ -45,7 +45,7 @@ export class ViewProductsComponent implements OnInit {
   searchTerm: string = '';
   start: number = 0;
   end: number = this.pageSize;
-  selectedOption: string = '';
+  selectedOption: string = 'A-Z';
 
   //Esta función constructor crea el formulario con el que se va a trabajar (para agregar o editar un producto).
   constructor(private productService: ProductService, private fb: FormBuilder) {
