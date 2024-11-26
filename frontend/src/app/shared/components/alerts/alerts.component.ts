@@ -40,7 +40,9 @@ export class AlertsComponent implements OnInit, OnDestroy {
    */
   private getAllAlerts() {
     this.alertService.getAllAlert().subscribe((alerts: Alert[]) => {
+      console.log(alerts);
       this.alerts = alerts;
+      console.log(this.alerts);
     });
   }
 
