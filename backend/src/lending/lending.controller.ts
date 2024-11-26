@@ -9,6 +9,11 @@ import { Lending } from '@prisma/client';
 export class LendingController {
     constructor(private readonly lendingService: LendingService){}
 
+    @Get("/pending-lending")
+    async getPending(){
+        return this.lendingService.getPendingLendings()
+    }
+
     @Get("/active-lending")
     async getActive(){
         return this.lendingService.getActiveLendings()
