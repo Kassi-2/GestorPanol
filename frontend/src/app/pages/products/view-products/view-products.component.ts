@@ -13,6 +13,8 @@ import Swal from 'sweetalert2';
 import { HttpClientModule } from '@angular/common/http';
 import { AddProductComponent } from '../add-product/add-product.component';
 import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
+import autoTable from 'jspdf-autotable';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-view-products',
@@ -231,5 +233,114 @@ export class ViewProductsComponent implements OnInit {
     //   });
 
     this.forma.reset();
+  }
+
+  /**
+  * Función que muestra una alerta para confirmar o no la exportación del productos del invetario, incluyendo el termino
+  * de busqueda en caso de haber filtado.
+  *
+  * @memberof ViewProductsComponent
+  */
+  public exportPdf(){
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger me-2"
+      },
+      buttonsStyling: false
+    });
+    swalWithBootstrapButtons.fire({
+      title: "¿Estás seguro?",
+      // el selected option por defecto deberia ser A-Z?
+      html: this.searchTerm
+      ? `¡Estás a punto de exportar el inventario de productos!<br>Filtro aplicado: ${this.searchTerm}<br>Ordenado por: ${this.selectedOption}`
+      : `¡Estás a punto de exportar el inventario de productos!<br>Ordenado por: ${this.selectedOption}`,
+      icon: "info",
+      showCancelButton: true,
+      confirmButtonText: "Sí, estoy seguro",
+      cancelButtonText: "No, no estoy seguro",
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.generatePdf()
+        swalWithBootstrapButtons.fire({
+          title: "¡PDF exportado!",
+          text: "El inventario de productos fue exportado con éxito.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      ;
+      } else if (
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        swalWithBootstrapButtons.fire({
+          title: "Cancelado",
+          text: "El inventario de productos no fue exportado.",
+          icon: "error",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
+    });
+  }
+
+  /**
+ *Función que genera el archivo pdf del listado de productos del inventario, incluyendo el filtrado realizado en este.
+  *
+  * @memberof ViewProductsComponent
+  */
+  public generatePdf() {
+    const doc = new jsPDF();
+
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text('Inventario de productos', 14, 10);
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text('Ordenado por: '+this.selectedOption, 14, 20)
+    if(this.searchTerm){
+      doc.text('Filtrado por la busqueda: '+this.searchTerm, 14, 25);
+    }
+
+    const filteredList = this.filteredList()
+
+    const tableData = filteredList.map(product => {
+      let state = '';
+
+      if (product.stock > 0 && product.criticalStock < product.stock) {
+        state = 'Disponible';
+      } else if (product.stock > 0 && product.criticalStock >= product.stock) {
+        state = 'Crítico';
+      } else {
+        state = 'No disponible';
+      }
+
+      return [
+        product.id,
+        product.name,
+        product.stock,
+        state
+      ];
+    });
+
+    const tableHeaders = [['Código', 'Nombre', 'Stock', 'Estado']];
+
+    autoTable(doc,{
+      head: tableHeaders,
+      body: tableData,
+      startY: this.searchTerm? 30 : 25,
+      theme: 'grid',
+      headStyles: {
+        fillColor: [247, 145, 35],
+        valign: 'middle',
+      },
+    })
+
+    const date = new Date();
+    const formattedDate = date.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+
+    doc.save(`Inventario-${formattedDate}.pdf`);
   }
 }

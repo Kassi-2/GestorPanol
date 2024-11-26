@@ -1,19 +1,30 @@
 <h1 class = "titulo">Lista de préstamos activos</h1>
 
 <app-lending-options></app-lending-options>
-<div class="custom_input" style="justify-content: center">
-  <svg xmlns="http://www.w3.org/2000/svg" class="svg_icon bi-search" viewBox="0 0 16 16">
-    <path
-      d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
-    </path>
-  </svg>
-  <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar..." class="input me-3" style="min-width: 300px" />
-
-  <form>
-    <input type="date" class="form-control" (change)="selectDate($event)">
-  </form>
-
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center">
+    <div class="custom_input">
+      <svg xmlns="http://www.w3.org/2000/svg" class="svg_icon bi-search" viewBox="0 0 16 16">
+        <path
+          d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
+        </path>
+      </svg>
+      <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar..." class="input me-3" style="min-width: 300px" />
+    
+      <form>
+        <input type="date" class="form-control" (change)="selectDate($event)">
+      </form>
+    </div>
+    <div class="d-flex gap-4">
+      <button type="button" class="btn btn-outline-danger" (click)="exportPdf()">
+        <i class="bi bi-filetype-pdf"></i>
+        Exportar Prestamos activos
+      </button>
+    </div>
+  </div>
+  
 </div>
+
 
 <div class="table-responsive-sm container-xl" style="margin-top: 20px;">
   <table class="table table-striped">

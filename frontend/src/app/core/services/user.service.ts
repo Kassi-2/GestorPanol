@@ -76,4 +76,25 @@ export class UserService {
   public getUserById(id: number): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/user/${id}`);
   }
+  /**
+   *Función que recibe el id y la información actualizada de un usuario para actualizarlo en la base de datos.
+   *
+   * @param {number} id
+   * @param {UserEdit} user
+   * @return {*}  {Observable<User>}
+   * @memberof UserService
+   */
+   public updateUser(id: number, user: UserEdit): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/${id}`, user);
+  }
+  /**
+   *Función que recibe un id de un usuario y lo elimina de la base de datos.
+   *
+   * @param {number} id
+   * @return {*}
+   * @memberof UserService
+   */
+   public deleteUser(id: number) {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 }

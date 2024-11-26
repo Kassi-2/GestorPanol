@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { SearchService } from '../../../core/services/search.service';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -13,6 +13,7 @@ import { UserAddComponent } from "../user-add/user-add.component";
 })
 export class UserOptionsComponent {
   searchTerm: string = '';
+  @Output() exportPdfEvent = new EventEmitter<string>();
 
   constructor(private searchService: SearchService) {}
   /**
@@ -22,5 +23,13 @@ export class UserOptionsComponent {
    */
   onSearch() {
     this.searchService.updateSearchTerm(this.searchTerm);
+  }
+  /**
+   * Función que se encarga de generar un archivo pdf con la información proveniente del listado de donde se presiono el boton exportar
+   *
+   * @memberof UserOptionsComponent
+   */
+  exportPDF() {
+    this.exportPdfEvent.emit(this.searchTerm); // Emitimos el evento
   }
 }
