@@ -1,18 +1,7 @@
 <h1 class = "text-center my-4">Inventario</h1>
 <div class="container mb-4">
   <div class="d-flex justify-content-between">
-    <div class="d-flex align-items-center">
-      <p class="mb-0 me-2 fw-semibold">Ordenar por:</p>
-      <div class="custom-select">
-        <select #options (change)="onSelected(options.value)">
-          <option default>A-Z</option>
-          <option>Z-A</option>
-          <option>De menor a mayor stock</option>
-          <option>De mayor a menor stock</option>
-        </select>
-        <div class="select-arrow"></div>
-      </div>
-    </div>
+
 
     <div class="custom_input">
       <svg xmlns="http://www.w3.org/2000/svg" class="svg_icon bi-search" viewBox="0 0 16 16">
@@ -23,7 +12,7 @@
       <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar..." class="input" style="min-width: 500px" />
     </div>
 
-    <div class="d-flex gap-4 justify-content-center"> 
+    <div class="d-flex gap-4 justify-content-center">
       <a href="inventory/add-product" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addProductModal">
         <i class="bi bi-plus-circle"></i> Añadir Producto
       </a>
@@ -31,8 +20,8 @@
         <i class="bi bi-filetype-pdf"></i>
         Exportar Inventario
       </button>
-    </div>  
-    
+    </div>
+
   </div>
 </div>
 
@@ -176,7 +165,9 @@
     </div>
     </div> }
   </div>
-  <ngb-pagination [collectionSize]="products.length" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true" />
+  <div style="margin-top: 20px; margin-left: 43%">
+    <ngb-pagination [collectionSize]="products.length" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true" />
+  </div>
 </div>
 
 

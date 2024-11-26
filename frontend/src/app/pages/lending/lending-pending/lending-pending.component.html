@@ -10,10 +10,7 @@
         </path>
       </svg>
       <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar..." class="input me-3" style="min-width: 300px" />
-    
-      <form>
-        <input type="date" class="form-control" (change)="selectDate($event)">
-      </form>
+
     </div>
     <div class="d-flex gap-4">
       <button type="button" class="btn btn-outline-danger" (click)="exportPdf()">
