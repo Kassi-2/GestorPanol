@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Post,
@@ -44,6 +45,14 @@ export class ProductController {
       );
     }
     return this.productService.createProduct(request);
+  }
+
+  @Get('/product/:id')
+  async getProductById(@Param('id') id: string) {
+    const productFound = await this.productService.getProductById(Number(id));
+    if (!productFound)
+      throw new NotFoundException('No se encontro ese producto');
+    return productFound;
   }
 
   @Put(':id')

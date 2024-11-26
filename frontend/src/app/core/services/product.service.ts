@@ -67,4 +67,12 @@ export class ProductService {
       return this.http.get<Product[]>(`${this.apiUrl}/active-name-asc`);
     }
   }
+
+  updateProduct(id: number, updatedProduct: Product): Observable<Product> {
+    console.log(updatedProduct);
+    return this.http.put<Product>(`${this.apiUrl}/${id}`, updatedProduct);
+  }
+  getProductForEdit(idProduct: number): Observable<Product> {
+    return this.http.get<Product>(`${this.apiUrl}/product/${idProduct}`);
+  }
 }

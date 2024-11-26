@@ -57,6 +57,11 @@ export class LendingService {
     return this.http.put<Lending>(`${this.apiUrl}/active-pending/${id}`, {});
   }
 
+  public updateLendingActive(id: number, lending: Lending): Observable<Lending> {
+    return this.http.put<Lending>(`${this.apiUrl}/update-lending/${id}`, lending);
+  }
+
+
   /**
    * Función para enviar el préstamo creado por el usuario al backend.
    *
