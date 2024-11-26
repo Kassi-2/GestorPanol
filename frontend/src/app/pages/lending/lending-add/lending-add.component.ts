@@ -139,13 +139,35 @@ export class LendingAddComponent implements OnInit {
       role: undefined,
     };
 
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger me-2',
+      },
+      buttonsStyling: false,
+    });
+
     this.userService.register(user).subscribe({
       next: () => {
         this.subscriptions.add(this.getAllTeachers());
+        swalWithBootstrapButtons.fire({
+          title: '¡Registrado!',
+          text: 'El usuario ha sido registrado exitosamente.',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false,
+        });
         this.clearForm(); // Limpiar el formulario
       },
       error: (error) => {
-        alert(error.error.message);
+        console.log(error.error.message);
+        swalWithBootstrapButtons.fire({
+          title: 'Error',
+          text: 'Ha ocurrido un problema, el usuario no se ha registrado.',
+          icon: 'error',
+          timer: 1500,
+          showConfirmButton: false,
+        });
       },
     });
   }

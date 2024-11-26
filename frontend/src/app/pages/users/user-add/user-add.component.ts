@@ -15,6 +15,8 @@ import { Degree } from '../../../core/models/degree.interface';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-user-add',
@@ -68,14 +70,37 @@ export class UserAddComponent implements OnInit, OnDestroy {
       role: this.userForm.get('role')?.value,
     };
 
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger me-2',
+      },
+      buttonsStyling: false,
+    });
+
     this.userService.register(user).subscribe({
       next: () => {
-        window.location.reload();
         this.clearForm();
+        swalWithBootstrapButtons.fire({
+          title: '¡Registrado!',
+          text: 'El usuario ha sido registrado exitosamente.',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false,
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       },
       error: (error) => {
-        alert(error.error.message);
-        window.location.reload();
+        console.log(error.error.message);
+        swalWithBootstrapButtons.fire({
+          title: 'Error',
+          text: 'Ha ocurrido un problema, el usuario no se ha registrado.',
+          icon: 'error',
+          timer: 1500,
+          showConfirmButton: false,
+        });
       },
     });
   }

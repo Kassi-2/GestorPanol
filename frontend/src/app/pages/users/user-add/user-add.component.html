@@ -119,7 +119,13 @@
           <li><strong>Rut:</strong> {{ userForm.get('rut')?.value }}</li>
           <li><strong>Nombre Completo:</strong> {{ userForm.get('name')?.value }}</li>
 
-          <li><strong>Tipo de Usuario:</strong> Profesor</li>
+          <li><strong>Tipo de Usuario:</strong>
+            {{ 
+              userForm.get('type')?.value === 'Student' ? 'Alumno' : 
+              userForm.get('type')?.value === 'Teacher' ? 'Profesor' : 
+              'Asistente'
+            }}
+          </li>
 
           @if(userForm.get('mail')?.value){
             <li><strong>Correo Electrónico:</strong> {{ userForm.get('mail')?.value }}</li>
