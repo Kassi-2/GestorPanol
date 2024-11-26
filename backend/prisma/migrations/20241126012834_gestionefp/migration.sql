@@ -44,7 +44,7 @@ CREATE TABLE `Assistant` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `product` (
+CREATE TABLE `Product` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NULL,
@@ -53,7 +53,7 @@ CREATE TABLE `product` (
     `state` BOOLEAN NOT NULL DEFAULT true,
     `fungible` BOOLEAN NOT NULL DEFAULT false,
 
-    UNIQUE INDEX `product_name_key`(`name`),
+    UNIQUE INDEX `Product_name_key`(`name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -132,7 +132,7 @@ ALTER TABLE `Lending` ADD CONSTRAINT `Lending_teacherId_fkey` FOREIGN KEY (`teac
 ALTER TABLE `LendingProduct` ADD CONSTRAINT `LendingProduct_lendingId_fkey` FOREIGN KEY (`lendingId`) REFERENCES `Lending`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `LendingProduct` ADD CONSTRAINT `LendingProduct_productId_fkey` FOREIGN KEY (`productId`) REFERENCES `product`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `LendingProduct` ADD CONSTRAINT `LendingProduct_productId_fkey` FOREIGN KEY (`productId`) REFERENCES `Product`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `AlertLending` ADD CONSTRAINT `AlertLending_alertId_fkey` FOREIGN KEY (`alertId`) REFERENCES `Alert`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

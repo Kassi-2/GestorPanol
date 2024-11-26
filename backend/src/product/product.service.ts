@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ProductCreateDTO } from './dto/product-create.dto';
-import { product } from '@prisma/client';
+import { Product } from '@prisma/client';
 import { ProductUpdateDTO } from './dto/product-update.dto';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class ProductService {
   //verifica que no exista un prducto ya creado con el mismo nombre
   //revisa en los productos eliminados si ya existía un producto con el mismo nombre
   //si existía se actualizan los valores por los nuevos ingresados
-  async createProduct(data: ProductCreateDTO): Promise<product> {
+  async createProduct(data: ProductCreateDTO): Promise<Product> {
     try{
     const buscarProduct = await this.prisma.product.findUnique({
       where: {
@@ -50,7 +50,7 @@ export class ProductService {
   //Obtener todos los productos de la tabla product de la base de datos
   //Devuelve un array de solo los productos que tienen un stock mayor a 0
   //y los entrega ordenados alfabéticamente por nombre
-  async getAvailableProducts(): Promise<product[]> {
+  async getAvailableProducts(): Promise<Product[]> {
     return this.prisma.product.findMany({
       where: {
         stock: { gt: 0 },
@@ -64,7 +64,7 @@ export class ProductService {
   //Obtener todos los productos de la tabla product de la base de datos
   //Devuelve un array de solo los productos que tienen estado true=activo,
   //y los entrega ordenados alfabéticamente por nombre descendentemente
-  async getActiveProductsNameDesc(): Promise<product[]> {
+  async getActiveProductsNameDesc(): Promise<Product[]> {
     return this.prisma.product.findMany({
       where: {
         state: true,
@@ -75,7 +75,7 @@ export class ProductService {
     });
   }
 
-  async updateProduct(id: number, data: ProductUpdateDTO): Promise<product> {
+  async updateProduct(id: number, data: ProductUpdateDTO): Promise<Product> {
     try{
       const product = await this.prisma.product.findUnique({
       where: { id },
@@ -120,7 +120,7 @@ export class ProductService {
   throw (error);
 }
   }
-  public async deleteProduct(id: number): Promise<product> {
+  public async deleteProduct(id: number): Promise<Product> {
     try {
       const product = await this.prisma.product.findUnique({
         where: { id },

@@ -158,9 +158,9 @@ export class LendingAddComponent implements OnInit {
     );
   }
   get notValidRut() {
-    const rutControl = this.userForm.get('rut');
-    console.log('Rut valid:', rutControl?.valid);
-    return rutControl?.invalid && rutControl?.touched;
+    return (
+      this.userForm.get('rut')?.invalid && this.userForm.get('rut')?.touched
+    );
   }
 
 
