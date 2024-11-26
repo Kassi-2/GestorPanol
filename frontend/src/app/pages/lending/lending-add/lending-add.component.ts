@@ -1,4 +1,4 @@
-import { Teacher } from './../../../core/models/user.interface';
+import { Teacher, UserType } from './../../../core/models/user.interface';
 import { SearchService } from './../../../core/services/search.service';
 import {
   contains,
@@ -132,7 +132,7 @@ export class LendingAddComponent implements OnInit {
     const user: UserRegister = {
       rut: this.userForm.get('rut')?.value,
       name: this.userForm.get('name')?.value,
-      type: this.userForm.get('type')?.value,
+      type: UserType.Teacher,
       mail: this.userForm.get('mail')?.value,
       phoneNumber: Number(this.userForm.get('phoneNumber')?.value),
       degree: undefined,
@@ -141,12 +141,11 @@ export class LendingAddComponent implements OnInit {
 
     this.userService.register(user).subscribe({
       next: () => {
-        window.location.reload(); // Recargar la página
+        this.subscriptions.add(this.getAllTeachers());
         this.clearForm(); // Limpiar el formulario
       },
       error: (error) => {
         alert(error.error.message);
-        window.location.reload();
       },
     });
   }

@@ -65,7 +65,6 @@ export class ProductController {
     return product;
   }
 
-
   @Delete(':id')
   async deleteProduct(@Param('id', ParseIntPipe) id: number) {
     return await this.productService.deleteProduct(id);

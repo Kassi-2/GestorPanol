@@ -61,7 +61,7 @@ export class AlertsComponent implements OnInit, OnDestroy {
         localStorage.setItem('alert', 'false');
       }
     };
-    setInterval(checkTime, 60000);
+    setInterval(checkTime, 6000);
   }
 
   /**
