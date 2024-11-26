@@ -47,6 +47,20 @@ export class ProductService {
   }
   }
 
+  //Obtener un solo producto por su id
+  //Devuelve el producto que coinicide con el id ingresado
+  public async getProductById(id: number): Promise<Product> {
+    try {
+      return await this.prisma.product.findUnique({
+        where: {
+          id,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
   //Obtener todos los productos de la tabla product de la base de datos
   //Devuelve un array de solo los productos que tienen un stock mayor a 0
   //y los entrega ordenados alfabéticamente por nombre

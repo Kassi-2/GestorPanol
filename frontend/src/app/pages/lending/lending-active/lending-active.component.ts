@@ -76,49 +76,74 @@ export class LendingActiveComponent {
     this.amountAux = amount
   }
 
-  public updateLending(): void{
+  public updateLending(): void {
+    // const updateLending: Lending = {
+    //   id: this.selectedLending.id,
+    //   comments: this.selectedLending.comments
+    // }
 
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
-        confirmButton: "btn btn-success",
-        cancelButton: "btn btn-danger"
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger',
       },
-      buttonsStyling: false
+      buttonsStyling: false,
     });
-    swalWithBootstrapButtons.fire({
-      title: "¿Estás seguro?",
-      text: "¡Estás actualizando un préstamo!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Sí, estoy seguro",
-      cancelButtonText: "¡No, deseo cancelar!",
-      reverseButtons: true
-    }).then((result) => {
-      if (result.isConfirmed) {
 
-        console.log(this.selectedLending)
-        swalWithBootstrapButtons.fire({
-          title: "¡Actualizado!",
-          text: "Se actualizó el préstamo.",
-          icon: "success",
-          timer: 1500,
-          showConfirmButton: false,
-        });
-      } else if (
-        result.dismiss === Swal.DismissReason.cancel
-      ) {
-        swalWithBootstrapButtons.fire({
-          title: "Cancelado",
-          text: "Se canceló la edición",
-          icon: "error",
-          timer: 1500,
-          showConfirmButton: false,
-        });
-      }
-    });
-    this.editMode()
+    swalWithBootstrapButtons
+      .fire({
+        title: '¿Estás seguro?',
+        text: '¡Estás actualizando un préstamo!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, estoy seguro',
+        cancelButtonText: 'No, deseo cancelar',
+        reverseButtons: true,
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          // Asegúrate de que `this.selectedLending` contenga los datos correctos
+          this.lendingService
+            .updateLendingActive(this.selectedLending.id, this.selectedLending)
+            .subscribe({
+              next: (response) => {
+                console.log('Préstamo actualizado:', response);
+                swalWithBootstrapButtons.fire({
+                  title: '¡Actualizado!',
+                  text: 'Se actualizó el préstamo.',
+                  icon: 'success',
+                  timer: 1500,
+                  showConfirmButton: false,
+                });
 
+                // Si necesitas actualizar alguna lista o datos en el componente
+              },
+              error: (error) => {
+                console.error('Error al actualizar el préstamo:', error);
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'No se pudo actualizar el préstamo. Intenta de nuevo.',
+                  timer: 1500,
+                  showConfirmButton: false,
+                });
+              },
+            });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          swalWithBootstrapButtons.fire({
+            title: 'Cancelado',
+            text: 'Se canceló la edición.',
+            icon: 'error',
+            timer: 1500,
+            showConfirmButton: false,
+          });
+        }
+      });
+
+    // Cambiar a modo de edición
+    this.editMode();
   }
+
 
   incrementAmount(productIndex: number): void {
     const product = this.selectedLending.lendingProducts[productIndex];
